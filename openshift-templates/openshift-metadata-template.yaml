@@ -1,15 +1,15 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: backup-openshift-metadata
+  name: backup-openshift-metadata-build-image
   annotations:
-    description: "Template creates image to perform OpenShift metadata backups"
+    description: "Template creates image to perform OpenShift metadata backups (better to use project named openshift)"
     tags: "backup"
 objects:
   - kind: BuildConfig
     apiVersion: v1
     metadata:
-      name: openshift-backup-metadata
+      name: openshift-backup-metadata-image
       annotations:
         description: Build image to perform backup from Github
     spec:
@@ -32,7 +32,6 @@ objects:
     spec:
       tags:
         - name: latest
-
 parameters:
   - name: SOURCE_REPOSITORY_URL 
     displayName: Source Repository URL 

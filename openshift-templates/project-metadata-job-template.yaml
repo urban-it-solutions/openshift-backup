@@ -1,0 +1,72 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: backup-project-metadata
+  annotations:
+    description: "Template creates job to run all project metadata backup. It requires service account to work correctly and also creates it (backup-sa). It will initiate restic repository if needed."
+    tags: "backup"
+objects:
+  - kind: job
+    apiVersion: v1
+    metadata:
+      name: project-metadata-backup
+      annotations:
+        description: Backup project metadata
+    spec:
+      parallelism: 1
+      completions: 1
+      template:
+        metadata:
+          name: project-metadata-backup
+        spec:
+        containers:
+        - name: project-metadata-backup
+          image: docker-registry.svc:5000/openshift/openshift-backup-metadata:latest
+          env:
+           - name: RESTIC_PASSWORD
+             value: "${RESTIC_PASSWORD}"
+           - name: PROJECT_NAME
+             valueFrom:
+               fieldRef:
+                fieldPath: metadata.namespace
+         - name: RESTIC_TAG
+           value: "${CUSTOM_TAG}"
+         - name: RESTIC_DESTINATION
+           value: "${RESTIC_DESTINATION}"
+         - name: AWS_ACCESS_KEY_ID
+           value: "${AWS_ACCESS_KEY}"
+         - name: AWS_SECRET_ACCESS_KEY
+           value: "${AWS_SECRET_ACCESS_KEY}"
+         - name: RESTIC_S3_HOST
+           value: "${RESTIC_HOST}"
+      serviceAccount: backup-sa
+      serviceAccountName: backup-sa
+      restartPolicy: Never
+  - kind: ServiceAccount
+    apiVersion: v1
+    metadata:
+      name: backup-sa
+  - kind: RoleBinding
+    metadata:
+      name: view_api_for_backup
+    RoleRef:
+      name: edit
+    subjects:
+    - kind: ServiceAccount
+      name: backup-sa
+parameters:
+  - name: RESTIC_PASSWORD 
+    displayName: Password for repository
+    description: The URL of the repository for openshift-backup project 
+    value: https://github.com/vadimzharov/openshift-backup.git
+    required: true 
+  - name: SOURCE_REPOSITORY_REF
+    description: Github branch
+    value: master
+    required: true 
+  - name: CONTEXT_DIR
+    description: Directory with Dockerfile to build metadata-backup image
+    value: metadata
+    required: true
+labels:
+  openshift-backup
