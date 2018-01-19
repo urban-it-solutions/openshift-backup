@@ -1,0 +1,51 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: backup-openshift-metadata
+  annotations:
+    description: "Template creates image to perform OpenShift metadata backups"
+    tags: "backup"
+objects:
+  - kind: BuildConfig
+    apiVersion: v1
+    metadata:
+      name: openshift-backup-metadata
+      annotations:
+        description: Build image to perform backup from Github
+    spec:
+      source:
+        type: Git
+        git:
+          uri: "${SOURCE_REPOSITORY_URL}" 
+          ref: "${SOURCE_REPOSITORY_REF}"
+        contextDir: "${CONTEXT_DIR}"
+      output:
+        to:
+          kind: "ImageStreamTag"
+          name: "openshift-backup-metadata:latest"
+      strategy:
+        type: Docker
+  - kind: ImageStream
+    apiVersion: v1
+    metadata:
+      name: openshift-backup-metadata
+    spec:
+      tags:
+        - name: latest
+
+parameters:
+  - name: SOURCE_REPOSITORY_URL 
+    displayName: Source Repository URL 
+    description: The URL of the repository for openshift-backup project 
+    value: https://github.com/vadimzharov/openshift-backup.git
+    required: true 
+  - name: SOURCE_REPOSITORY_REF
+    description: Github branch
+    value: master
+    required: true 
+  - name: CONTEXT_DIR
+    description: Directory with Dockerfile to build metadata-backup image
+    value: metadata
+    required: true
+labels:
+  openshift-backup: metadata
