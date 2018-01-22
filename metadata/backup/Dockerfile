@@ -28,8 +28,8 @@ ENV TOKEN=""
 VOLUME /data
 
 COPY entry.sh /entry.sh
-COPY ../restic-openshift-api.cfg /restic-openshift-api.cfg
-COPY ../restic-openshift-oapi.cfg /restic-openshift-oapi.cfg
+COPY restic-openshift-api.cfg /restic-openshift-api.cfg
+COPY restic-openshift-oapi.cfg /restic-openshift-oapi.cfg
 
 WORKDIR "/"
 
