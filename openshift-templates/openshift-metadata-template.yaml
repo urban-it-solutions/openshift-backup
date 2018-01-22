@@ -44,7 +44,7 @@ parameters:
     required: true 
   - name: CONTEXT_DIR
     description: Directory with Dockerfile to build metadata-backup image
-    value: metadata
+    value: metadata/backup
     required: true
 labels:
   openshift-backup: metadata

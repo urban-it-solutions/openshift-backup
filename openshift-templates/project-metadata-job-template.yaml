@@ -16,13 +16,13 @@ objects:
     apiVersion: v1
     metadata:
       name: api_GET_for_backup
-    RoleRef:
+    roleRef:
       name: edit
     subjects:
     - kind: ServiceAccount
       name: backup-sa  
-  - kind: job
-    apiVersion: v1
+  - kind: Job
+    apiVersion: batch/v1
     metadata:
       name: project-metadata-backup
       annotations:
@@ -36,7 +36,7 @@ objects:
         spec:
           containers:
           - name: project-metadata-backup
-            image: docker-registry.svc:5000/openshift/openshift-backup-metadata:latest
+            image: docker-registry.default.svc:5000/openshift/openshift-backup-metadata:latest
             env:
               - name: RESTIC_PASSWORD
                 value: ${RESTIC_PASSWORD}
@@ -83,6 +83,5 @@ parameters:
     description: Secret access key for your S3 server
     value: 123qweASD
     required: true
-
 labels:
-  openshift-backup
+  openshift-backup: metadata
