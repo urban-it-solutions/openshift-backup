@@ -3,9 +3,24 @@ apiVersion: v1
 metadata:
   name: backup-project-metadata
   annotations:
-    description: "Template creates job to run all project metadata backup. It requires service account to work correctly and also creates it (backup-sa). It will initiate restic repository if needed."
+    description: "Template creates job to run all project metadata backup.
+      It requires service account to work correctly and also creates it (backup-sa).
+      It will initiate restic repository if needed."
     tags: "backup"
 objects:
+  - kind: ServiceAccount
+    apiVersion: v1
+    metadata:
+      name: backup-sa
+  - kind: RoleBinding
+    apiVersion: v1
+    metadata:
+      name: api_GET_for_backup
+    RoleRef:
+      name: edit
+    subjects:
+    - kind: ServiceAccount
+      name: backup-sa  
   - kind: job
     apiVersion: v1
     metadata:
@@ -19,41 +34,29 @@ objects:
         metadata:
           name: project-metadata-backup
         spec:
-        containers:
-        - name: project-metadata-backup
-          image: docker-registry.svc:5000/openshift/openshift-backup-metadata:latest
-          env:
-           - name: RESTIC_PASSWORD
-             value: "${RESTIC_PASSWORD}"
-           - name: PROJECT_NAME
-             valueFrom:
-               fieldRef:
-                fieldPath: metadata.namespace
-         - name: RESTIC_TAG
-           value: "${CUSTOM_TAG}"
-         - name: RESTIC_DESTINATION
-           value: "${RESTIC_DESTINATION}"
-         - name: AWS_ACCESS_KEY_ID
-           value: "${AWS_ACCESS_KEY}"
-         - name: AWS_SECRET_ACCESS_KEY
-           value: "${AWS_SECRET_ACCESS_KEY}"
-         - name: RESTIC_S3_HOST
-           value: "${RESTIC_HOST}"
-      serviceAccount: backup-sa
-      serviceAccountName: backup-sa
-      restartPolicy: Never
-  - kind: ServiceAccount
-    apiVersion: v1
-    metadata:
-      name: backup-sa
-  - kind: RoleBinding
-    metadata:
-      name: api_GET_for_backup
-    RoleRef:
-      name: edit
-    subjects:
-    - kind: ServiceAccount
-      name: backup-sa
+          containers:
+          - name: project-metadata-backup
+            image: docker-registry.svc:5000/openshift/openshift-backup-metadata:latest
+            env:
+              - name: RESTIC_PASSWORD
+                value: ${RESTIC_PASSWORD}
+              - name: PROJECT_NAME
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.namespace  
+              - name: RESTIC_TAG
+                value: ${CUSTOM_TAG}
+              - name: RESTIC_DESTINATION
+                value: ${RESTIC_DESTINATION}
+              - name: AWS_ACCESS_KEY_ID
+                value: ${AWS_ACCESS_KEY}
+              - name: AWS_SECRET_ACCESS_KEY
+                value: ${AWS_SECRET_ACCESS_KEY}
+              - name: RESTIC_S3_HOST
+                value: ${RESTIC_HOST}
+          serviceAccount: backup-sa
+          serviceAccountName: backup-sa
+          restartPolicy: Never
 parameters:
   - name: RESTIC_PASSWORD 
     displayName: Password for restic repository
@@ -79,7 +82,7 @@ parameters:
   - name: AWS_SECRET_ACCESS_KEY
     description: Secret access key for your S3 server
     value: 123qweASD
-    required: true  
+    required: true
 
 labels:
   openshift-backup
