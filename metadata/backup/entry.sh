@@ -42,29 +42,29 @@ echo "Backuping Project description..."
 
 curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
     -H "Authorization: Bearer $TOKEN" \
-    -H 'Accept: application/yaml' \
-    https://openshift.default.svc.cluster.local/oapi/v1/projects/$PROJECT_NAME > $TMP_DIR/$PROJECT_NAME-project.yaml
+    -H 'Accept: application/json' \
+    https://openshift.default.svc.cluster.local/oapi/v1/projects/$PROJECT_NAME > $TMP_DIR/$PROJECT_NAME-project.json
 
 while read api; do
     echo "Backuping $api on https://openshift.default.svc.cluster.local/oapi/v1/namespaces/$PROJECT_NAME/$api"
     curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
     -H "Authorization: Bearer $TOKEN" \
-    -H 'Accept: application/yaml' \
-    https://openshift.default.svc.cluster.local/oapi/v1/namespaces/$PROJECT_NAME/$api > $TMP_DIR/$PROJECT_NAME-$api.yaml
+    -H 'Accept: application/json' \
+    https://openshift.default.svc.cluster.local/oapi/v1/namespaces/$PROJECT_NAME/$api > $TMP_DIR/$PROJECT_NAME-$api.json
 done < /restic-openshift-oapi.cfg
 
 while read api; do
     echo "Backuping $api on https://openshift.default.svc.cluster.local/api/v1/namespaces/$PROJECT_NAME/$api"
     curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
     -H "Authorization: Bearer $TOKEN" \
-    -H 'Accept: application/yaml' \
-    https://openshift.default.svc.cluster.local/api/v1/namespaces/$PROJECT_NAME/$api > $TMP_DIR/$PROJECT_NAME-$api.yaml
+    -H 'Accept: application/json' \
+    https://openshift.default.svc.cluster.local/api/v1/namespaces/$PROJECT_NAME/$api > $TMP_DIR/$PROJECT_NAME-$api.json
     echo "=============================================================="
 done < /restic-openshift-api.cfg
 
 echo "=============================================================="
 
-restic -r $RESTIC_REPOSITORY backup $TMP_DIR/*.yaml --tag metadata --tag $PROJECT_NAME --tag $RESTIC_TAG --hostname $PROJECT_NAME --cache-dir /tmp/ 2>&1
+restic -r $RESTIC_REPOSITORY backup $TMP_DIR/*.json --tag metadata --tag $PROJECT_NAME --tag $RESTIC_TAG --hostname $PROJECT_NAME --cache-dir /tmp/ 2>&1
 
 rc=$?
 
