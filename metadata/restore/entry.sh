@@ -42,7 +42,7 @@ echo "=============================================================="
 
 echo "Restoring files using snapshot ${RESTIC_SNAPSHOT}"
 
-restic -r $RESTIC_REPOSITORY  restore $RESTIC_SNAPSHOT --target $TMP_DIR
+restic -r $RESTIC_REPOSITORY  restore $RESTIC_SNAPSHOT --target $TMP_DIR --cache-dir /tmp/
 
 rc=$?
 
@@ -54,6 +54,24 @@ else
     exit
 fi
 
+echo "Restoring project metadata"
+
+while read api; do
+    echo "Backuping $api on https://openshift.default.svc.cluster.local/oapi/v1/namespaces/$PROJECT_NAME/$api"
+    curl -X POST --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
+    -H "Authorization: Bearer $TOKEN" \
+    -H 'Accept: application/yaml' \
+    https://openshift.default.svc.cluster.local/oapi/v1/namespaces/$PROJECT_NAME/$api < $TMP_DIR/$PROJECT_NAME-$api.yaml
+done < /restic-openshift-oapi.cfg
+
+while read api; do
+    echo "Backuping $api on https://openshift.default.svc.cluster.local/api/v1/namespaces/$PROJECT_NAME/$api"
+    curl -X POST --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
+    -H "Authorization: Bearer $TOKEN" \
+    -H 'Accept: application/yaml' \
+    https://openshift.default.svc.cluster.local/api/v1/namespaces/$PROJECT_NAME/$api < $TMP_DIR/$PROJECT_NAME-$api.yaml
+    echo "=============================================================="
+done < /restic-openshift-api.cfg
 
 
 

@@ -14,7 +14,7 @@ objects:
   - kind: RoleBinding
     apiVersion: v1
     metadata:
-      name: api_PUT_for_restore
+      name: api_POST_for_restore
     roleRef:
       name: edit
     subjects:
