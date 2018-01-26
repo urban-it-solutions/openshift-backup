@@ -14,18 +14,12 @@ echo "===================================="
 
 if [ $RESTIC_DESTINATION = "nfs" ]; then
     RESTIC_REPOSITORY="$RESTIC_REPOSITORY/$PROJECT_NAME"
-    echo "Will backup to NFS, dir $RESTIC_REPOSITORY"
-    mkdir -p $RESTIC_REPOSITORY
-    if [ ! -f "$RESTIC_REPOSITORY/config" ]; then
-        echo "Restic repository '${RESTIC_REPOSITORY}' does not exists. Running restic init."
-        restic init | true
-    fi
+    echo "Will restore from NFS, dir $RESTIC_REPOSITORY"
 fi
 
 if [ $RESTIC_DESTINATION = "s3" ]; then
-    echo "Will backup to S3 object store - $RESTIC_S3_HOST:$RESTIC_S3_PORT"
+    echo "Will restore from S3 object store - $RESTIC_S3_HOST:$RESTIC_S3_PORT"
     export RESTIC_REPOSITORY=s3:http://$RESTIC_S3_HOST:$RESTIC_S3_PORT/$PROJECT_NAME
-    restic -r $RESTIC_REPOSITORY init
 fi
 
 TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
