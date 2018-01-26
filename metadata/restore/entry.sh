@@ -47,9 +47,9 @@ restic -r $RESTIC_REPOSITORY  restore $RESTIC_SNAPSHOT --target $TMP_DIR --cache
 rc=$?
 
 if [[ $rc == 0 ]]; then
-    echo "Restore successfull" 
+    echo "Restore files with metadata successfull" 
 else
-    echo "Restore Failed with Status ${rc}"
+    echo "Restore files with metadata failed with status ${rc}"
     restic unlock
     exit
 fi
@@ -60,16 +60,16 @@ while read api; do
     echo "Restoring $api on https://openshift.default.svc.cluster.local/oapi/v1/namespaces/$PROJECT_NAME/$api"
     curl -X POST --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
     -H "Authorization: Bearer $TOKEN" \
-    -H 'Accept: application/yaml' \
-    https://openshift.default.svc.cluster.local/oapi/v1/namespaces/$PROJECT_NAME/$api < $TMP_DIR/$PROJECT_NAME-$api.yaml
+    -H 'Accept: application/json' \
+    https://openshift.default.svc.cluster.local/oapi/v1/namespaces/$PROJECT_NAME/$api < $TMP_DIR/$PROJECT_NAME-$api.json
 done < /restic-openshift-oapi.cfg
 
 while read api; do
     echo "Restoring $api on https://openshift.default.svc.cluster.local/api/v1/namespaces/$PROJECT_NAME/$api"
     curl -X POST --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
     -H "Authorization: Bearer $TOKEN" \
-    -H 'Accept: application/yaml' \
-    https://openshift.default.svc.cluster.local/api/v1/namespaces/$PROJECT_NAME/$api < $TMP_DIR/$PROJECT_NAME-$api.yaml
+    -H 'Accept: application/json' \
+    https://openshift.default.svc.cluster.local/api/v1/namespaces/$PROJECT_NAME/$api < $TMP_DIR/$PROJECT_NAME-$api.json
     echo "=============================================================="
 done < /restic-openshift-api.cfg
 
