@@ -1,4 +1,4 @@
-FROM frolvlad/alpine-glibc:latest
+FROM golang:1.9.1-alpine3.6	
 MAINTAINER Vadim Zharov
 
 RUN echo http://nl.alpinelinux.org/alpine/v3.4/community >> /etc/apk/repositories
