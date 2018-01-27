@@ -21,10 +21,10 @@ echo "Will try to backup these PVCs:"
 
 oc get pvc --no-headers=true | awk '{print $1}'
 
-while read -r pvc ; do
+oc get pvc --no-headers=true | awk '{print $1}' | while read -r pvc ; do
     echo "Processing $pvc"
     # your code goes here
-done < oc get pvc --no-headers=true | awk '{print $1}'
+done
 
 
 
