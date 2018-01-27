@@ -15,6 +15,7 @@ echo "===================================="
 if [ $RESTIC_DESTINATION = "nfs" ]; then
     RESTIC_REPOSITORY="$RESTIC_REPOSITORY/$PROJECT_NAME/$RESTIC_TAG"
     echo "Will restore from NFS, dir $RESTIC_REPOSITORY"
+    
 fi
 
 if [ $RESTIC_DESTINATION = "s3" ]; then
@@ -28,10 +29,18 @@ echo "=============================================================="
 
 echo "Current snapshots in repository:"
 
-restic -r $RESTIC_REPOSITORY snapshots --cache-dir /tmp/
+restic -r $RESTIC_REPOSITORY snapshots --cache-dir /tmp/ 2>&1
+
+rc=$?
+
+if [[ $rc == 0 ]]; then
+    echo "Repository found" 
+else
+    echo "Repository not found. Status ${rc}"
+    exit
+fi
 
 echo "=============================================================="
-
 
 restic -r $RESTIC_REPOSITORY restore $RESTIC_SNAPSHOT --target / --cache-dir /tmp/ --include /data 2>&1
 
