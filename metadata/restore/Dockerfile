@@ -16,7 +16,8 @@ RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://raw.githubusercontent.com/
 RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.26-r0/glibc-2.26-r0.apk
 RUN apk add glibc-2.26-r0.apk
 
-RUN apk add glibc-bin-2.26-r0.apk glibc-i18n-2.26-r0.apk && /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8
+RUN apk add glibc-bin-2.26-r0.apk glibc-i18n-2.26-r0.apk 
+RUN /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8
 
 RUN apk del git
 
