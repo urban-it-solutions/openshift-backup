@@ -20,7 +20,7 @@ objects:
           name: project-files-backup
         spec:
           containers:
-          - name: project-files-backup
+          - name: ${JOB_NAME}
             image: docker-registry.default.svc:5000/openshift/openshift-backup-files:latest
             env:
               - name: RESTIC_PASSWORD
@@ -73,6 +73,10 @@ parameters:
   - name: AWS_SECRET_ACCESS_KEY
     description: Secret access key for your S3 server
     value: 123qweASD
+    required: true
+  - name: JOB_NAME
+    description: Job's name
+    value: project-files-backup
     required: true
 labels:
   openshift-backup: files
