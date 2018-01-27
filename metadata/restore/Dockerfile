@@ -12,7 +12,11 @@ RUN wget https://github.com/openshift/origin/releases/download/v3.7.1/openshift-
 
 RUN tar -xvf openshift-origin-client-tools-v3.7.1-ab0f056-linux-64bit.tar.gz && mv openshift-origin-client-tools-v3.7.1-ab0f056-linux-64bit/oc /usr/local/bin/
 
-RUN chown root:root /usr/local/bin/oc
+RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://raw.githubusercontent.com/sgerrand/alpine-pkg-glibc/master/sgerrand.rsa.pub
+RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.26-r0/glibc-2.26-r0.apk
+RUN apk add glibc-2.26-r0.apk
+
+RUN apk add glibc-bin-2.26-r0.apk glibc-i18n-2.26-r0.apk && /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8
 
 RUN apk del git
 
