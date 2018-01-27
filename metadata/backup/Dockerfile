@@ -23,7 +23,6 @@ ENV RESTIC_S3_HOST=localhost
 ENV RESTIC_S3_PORT="9000"
 ENV TOKEN=""
 
-
 # /data is the dir where you have to put the data to be backed up
 VOLUME /data
 

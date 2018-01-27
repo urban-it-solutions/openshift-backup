@@ -25,20 +25,20 @@ fi
 
 if [ $RESTIC_DESTINATION = "s3" ]; then
     echo "Will backup to S3 object store - $RESTIC_S3_HOST:$RESTIC_S3_PORT"
-    export RESTIC_REPOSITORY=s3:http://$RESTIC_S3_HOST:$RESTIC_S3_PORT/$PROJECT_NAME
+    export RESTIC_REPOSITORY=s3:http://$RESTIC_S3_HOST:$RESTIC_S3_PORT/$PROJECT_NAME/$RESTIC_TAG
     restic -r $RESTIC_REPOSITORY init
 fi
 
 echo "Starting backup...."
 
-restic backup /data --tag metadata --tag $PROJECT_NAME --tag $RESTIC_TAG --hostname $PROJECT_NAME --exclude=$RESTIC_EXCLUDE --cache-dir /tmp/ 2>&1
+restic backup /data --tag files --tag $PROJECT_NAME --tag $RESTIC_TAG --hostname $PROJECT_NAME --exclude=$RESTIC_EXCLUDE --cache-dir /tmp/ 2>&1
 
 rc=$?
 
 if [[ $rc == 0 ]]; then
-    echo "Backup Successfull" 
+    echo "Backup successfull" 
 else
-    echo "Backup Failed with Status ${rc}"
+    echo "Backup failed with Status ${rc}"
     restic unlock
 exit
 
@@ -49,7 +49,7 @@ echo "==================================="
 echo "Starting prune process..."
 echo "-----------------------------------"
 
-restic forget --keep-last $RESTIC_KEEP --prune --tag $RESTIC_TAG
+restic forget --keep-last $RESTIC_KEEP --prune --tag files --tag $PROJECT_NAME --tag $RESTIC_TAG --cache-dir /tmp/
 
 echo "-----------------------------------"
 echo "Pruning complete!"
