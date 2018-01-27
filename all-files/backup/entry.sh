@@ -24,6 +24,7 @@ oc get pvc --no-headers=true | awk '{print $1}'
 oc get pvc --no-headers=true | awk '{print $1}' | while read -r pvc ; do
     echo "Processing $pvc"
     # your code goes here now
+    oc process backup-project-files	-p=CUSTOM_TAG=$pvc
 done
 
 
