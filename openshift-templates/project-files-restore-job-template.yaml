@@ -3,9 +3,15 @@ apiVersion: v1
 metadata:
   name: restore-project-files
   annotations:
-    description: "Template creates job to run files restore to one PVC."
+    description: "Template creates job to run files restore to one PVC.
+    In some cases this job has to be run as root (to set correct ownership for restored files.
+    The template will create service account restore-sa to do it, but you have to setup correct SCC (anyuid)"
     tags: "restore"
 objects:
+  - kind: ServiceAccount
+    apiVersion: v1
+    metadata:
+      name: restore-sa
   - kind: Job
     apiVersion: batch/v1
     metadata:
@@ -42,6 +48,8 @@ objects:
             volumeMounts:
               - mountPath: /data
                 name: backup-target
+          serviceAccount: restore-sa
+          serviceAccountName: restore-sa
           restartPolicy: Never
           volumes:
             - name: backup-target
