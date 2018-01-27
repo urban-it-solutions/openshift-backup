@@ -33,7 +33,7 @@ restic -r $RESTIC_REPOSITORY snapshots --cache-dir /tmp/
 echo "=============================================================="
 
 
-restic -r $RESTIC_REPOSITORY restore $RESTIC_SNAPSHOT --target / --cache-dir /tmp/ 2>&1
+restic -r $RESTIC_REPOSITORY restore $RESTIC_SNAPSHOT --target / --cache-dir /tmp/ --include /data 2>&1
 
 rc=$?
 
@@ -41,9 +41,8 @@ if [[ $rc == 0 ]]; then
     echo "Restore successfull" 
 else
     echo "Restore failed with status ${rc}"
-    restic unlock
+    restic unlock --cache-dir /tmp/
 exit
-
 fi
 
 
