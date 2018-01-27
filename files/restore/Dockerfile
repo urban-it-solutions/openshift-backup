@@ -22,6 +22,7 @@ ENV AWS_SECRET_ACCESS_KEY=""
 ENV RESTIC_S3_HOST=localhost
 ENV RESTIC_S3_PORT="9000"
 ENV TOKEN=""
+ENV RESTIC_SNAPSHOT="latest"
 
 # /data is the dir where you have to put the data to be backed up
 VOLUME /data

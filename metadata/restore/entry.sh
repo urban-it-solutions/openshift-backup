@@ -9,7 +9,6 @@ echo "Destination: $RESTIC_DESTINATION"
 echo "Repository password: "$RESTIC_PASSWORD
 echo "Backup tag: " $RESTIC_TAG
 echo "Project name: " $PROJECT_NAME
-echo "Will keep $RESTIC_KEEP copies of data"
 echo "===================================="
 
 if [ $RESTIC_DESTINATION = "nfs" ]; then

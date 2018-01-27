@@ -1,0 +1,78 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: restore-project-files
+  annotations:
+    description: "Template creates job to run files restore to one PVC."
+    tags: "restore"
+objects:
+  - kind: Job
+    apiVersion: batch/v1
+    metadata:
+      name: project-files-restore
+      annotations:
+        description: Restore project files to one PVC
+    spec:
+      parallelism: 1
+      completions: 1
+      template:
+        metadata:
+          name: project-files-restore
+        spec:
+          containers:
+          - name: project-files-restore
+            image: docker-registry.default.svc:5000/openshift/openshift-restore-files:latest
+            env:
+              - name: RESTIC_PASSWORD
+                value: ${RESTIC_PASSWORD}
+              - name: PROJECT_NAME
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.namespace  
+              - name: RESTIC_TAG
+                value: ${CUSTOM_TAG}
+              - name: RESTIC_DESTINATION
+                value: ${RESTIC_DESTINATION}
+              - name: AWS_ACCESS_KEY_ID
+                value: ${AWS_ACCESS_KEY}
+              - name: AWS_SECRET_ACCESS_KEY
+                value: ${AWS_SECRET_ACCESS_KEY}
+              - name: RESTIC_S3_HOST
+                value: ${RESTIC_HOST}
+            volumeMounts:
+              - mountPath: /data
+                name: backup-target
+                readOnly: true
+          restartPolicy: Never
+          volumes:
+            - name: backup-target
+              persistentVolumeClaim:
+                claimName: ${CUSTOM_TAG}
+parameters:
+  - name: RESTIC_PASSWORD 
+    displayName: Password for restic repository
+    description: Password for restic repository. If repository doesn't exist - script will create it. 
+    value: 123qweASD
+    required: true 
+  - name: CUSTOM_TAG
+    description: Persistent volume claim name
+    value: postgresql
+    required: true 
+  - name: RESTIC_DESTINATION
+    description: Destination to store backups. Currently only S3 is supported
+    value: s3
+    required: true
+  - name: RESTIC_HOST
+    description: Server where you plan to store your backups
+    value: jump02.home.msk
+    required: true
+  - name: AWS_ACCESS_KEY
+    description: Access key for your S3 server
+    value: 123qweASD
+    required: true
+  - name: AWS_SECRET_ACCESS_KEY
+    description: Secret access key for your S3 server
+    value: 123qweASD
+    required: true
+labels:
+  openshift-backup: files
