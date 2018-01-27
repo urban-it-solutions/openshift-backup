@@ -54,22 +54,19 @@ else
     exit
 fi
 
+echo "=============================================="
+
 echo "Restoring project metadata"
 
 while read api; do
-    echo "Restoring $api on https://openshift.default.svc.cluster.local/oapi/v1/namespaces/$PROJECT_NAME/$api"
-    curl -X POST --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
-    -H "Authorization: Bearer $TOKEN" \
-    -H 'Accept: application/json' \
-    https://openshift.default.svc.cluster.local/oapi/v1/namespaces/$PROJECT_NAME/$api < $TMP_DIR/$PROJECT_NAME-$api.json
+    echo "Restoring $api for $PROJECT_NAME"
+    oc create -f $TMP_DIR/$PROJECT_NAME-$api.json
+    echo "=============================================================="
 done < /restic-openshift-oapi.cfg
 
 while read api; do
-    echo "Restoring $api on https://openshift.default.svc.cluster.local/api/v1/namespaces/$PROJECT_NAME/$api"
-    curl -X POST --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
-    -H "Authorization: Bearer $TOKEN" \
-    -H 'Accept: application/json' \
-    https://openshift.default.svc.cluster.local/api/v1/namespaces/$PROJECT_NAME/$api < $TMP_DIR/$PROJECT_NAME-$api.json
+    echo "Restoring $api for $PROJECT_NAME"
+    oc create -f $TMP_DIR/$PROJECT_NAME-$api.json
     echo "=============================================================="
 done < /restic-openshift-api.cfg
 
