@@ -12,6 +12,8 @@ RUN wget https://github.com/openshift/origin/releases/download/v3.7.1/openshift-
 
 RUN tar -xvf openshift-origin-client-tools-v3.7.1-ab0f056-linux-64bit.tar.gz && mv openshift-origin-client-tools-v3.7.1-ab0f056-linux-64bit/oc /usr/local/bin/
 
+RUN chown root:root /usr/local/bin/oc
+
 RUN apk del git
 
 RUN mkdir /mnt/restic
