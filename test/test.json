@@ -1,0 +1,46 @@
+{                                                                               
+  "kind": "Service",                                                            
+  "apiVersion": "v1",                                                           
+  "metadata": {                                                                 
+    "selfLink": "/api/v1/namespaces/wordpress-pgsql/services",                  
+    "resourceVersion": "3192156"                                                
+  },                                                                            
+  "items": [                                                                    
+    {                                                                           
+      "metadata": {                                                             
+        "name": "postgresql",                                                   
+        "namespace": "wordpress-pgsql",                                         
+        "selfLink": "/api/v1/namespaces/wordpress-pgsql/services/postgresql",   
+        "uid": "e45a9a1b-af51-11e7-96c3-525400da2b7e",                          
+        "resourceVersion": "1440609",                                           
+        "creationTimestamp": "2017-10-12T13:33:11Z",                            
+        "labels": {                                                             
+          "app": "postgresql-persistent",                                       
+          "template": "postgresql-persistent-template"                          
+        },                                                                      
+        "annotations": {                                                        
+          "template.openshift.io/expose-uri": "postgres://{.spec.clusterIP}:{.spec.ports[?(.name==\"postgresql\")].port}"  
+        }                                                                       
+      },                                                                        
+      "spec": {                                                                 
+        "ports": [                                                              
+          {                                                                     
+            "name": "postgresql",                                               
+            "protocol": "TCP",                                                  
+            "port": 5432,                                                       
+            "targetPort": 5432                                                  
+          }                                                                     
+        ],                                                                      
+        "selector": {                                                           
+          "name": "postgresql"                                                  
+        },                                                                      
+        "clusterIP": "172.30.97.209",                                           
+        "type": "ClusterIP",                                                    
+        "sessionAffinity": "None"                                               
+      },                                                                        
+      "status": {                                                               
+        "loadBalancer": {}                                                      
+      }                                                                         
+    }                                                                           
+  ] 
+}

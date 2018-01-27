@@ -2,11 +2,16 @@ FROM golang:1.9.1-alpine3.6
 MAINTAINER Vadim Zharov
 
 RUN echo http://nl.alpinelinux.org/alpine/v3.4/community >> /etc/apk/repositories
-RUN apk add --no-cache git nfs-utils openssh fuse curl
+RUN apk add --no-cache git nfs-utils openssh fuse curl wget
 RUN git clone https://github.com/restic/restic \
   && cd restic \
   && go run build.go \
   && cp restic /usr/local/bin/
+
+RUN wget https://github.com/openshift/origin/releases/download/v3.7.1/openshift-origin-client-tools-v3.7.1-ab0f056-linux-64bit.tar.gz
+
+RUN tar -xvf openshift-origin-client-tools-v3.7.1-ab0f056-linux-64bit.tar.gz && mv openshift-origin-client-tools-v3.7.1-ab0f056-linux-64bit/oc /usr/local/bin/
+
 RUN apk del git
 
 RUN mkdir /mnt/restic
