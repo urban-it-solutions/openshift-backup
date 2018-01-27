@@ -33,7 +33,7 @@ restic -r $RESTIC_REPOSITORY snapshots --cache-dir /tmp/
 echo "=============================================================="
 
 
-restic -r $RESTIC_REPOSITORY restore $RESTIC_SNAPSHOT --target /data --cache-dir /tmp/ 2>&1
+restic -r $RESTIC_REPOSITORY restore $RESTIC_SNAPSHOT --target / --cache-dir /tmp/ 2>&1
 
 rc=$?
 

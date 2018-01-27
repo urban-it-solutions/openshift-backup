@@ -42,7 +42,6 @@ objects:
             volumeMounts:
               - mountPath: /data
                 name: backup-target
-                readOnly: true
           restartPolicy: Never
           volumes:
             - name: backup-target
