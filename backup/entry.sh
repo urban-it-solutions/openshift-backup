@@ -3,12 +3,10 @@ set +e
 
 echo "+======================================================================+"
 echo "| Parameters:                                                          |"
-echo "| Will backup: $BACKUP_TYPE                                            |"
-echo "| Source: /data                                                        |" 
+echo "| Will backup: $BACKUP_TYPE for project $PROJECT_NAME                  |"
 echo "| Destination: $RESTIC_REPOSITORY                                      |"
 echo "| Repository password: $RESTIC_PASSWORD                                |"
 echo "| Backup tag: $RESTIC_TAG                                              |"
-echo "| Project name: $PROJECT_NAME                                          |"
 echo "| Will keep $RESTIC_KEEP copies of data                                |"
 echo "| Will exclude files from target directory with mask $RESTIC_EXCLUDE   |"
 echo "=======================================================================+"
@@ -17,7 +15,7 @@ echo ""
 
 if [ $RESTIC_DESTINATION = "s3" ]; then
     echo "Will backup to S3 object store - $RESTIC_S3_HOST:$RESTIC_S3_PORT"
-    export RESTIC_REPOSITORY=s3:http://$RESTIC_S3_HOST:$RESTIC_S3_PORT/$PROJECT_NAME
+    export RESTIC_REPOSITORY=s3:http://$RESTIC_S3_HOST:$RESTIC_S3_PORT/$PROJECT_NAME/$BACKUP_TYPE
     restic -r $RESTIC_REPOSITORY init
 fi
 
@@ -55,7 +53,7 @@ else
     exit
 fi
 
-echo "==================================="
+echo "===================================="
 echo ""
 echo "+==================================+"
 echo "| Current backups in repositories: |"

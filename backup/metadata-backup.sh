@@ -13,19 +13,20 @@ mkdir -p $TMP_DIR
 
 echo "Working using token $TOKEN"
 
-echo "Starting project backup...."
+echo "Starting project metadata backup...."
 
 echo "=============================================================="
 
-echo "Backuping Project description..."
+echo "Get project metadata"
 
+echo "Get project name"
 curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
     -H "Authorization: Bearer $TOKEN" \
     -H 'Accept: application/json' \
     https://openshift.default.svc.cluster.local/oapi/v1/projects/$PROJECT_NAME > $TMP_DIR/$PROJECT_NAME-project.json
 
 while read api; do
-    echo "Backuping $api on https://openshift.default.svc.cluster.local/oapi/v1/namespaces/$PROJECT_NAME/$api"
+    echo "Perform backup $api on https://openshift.default.svc.cluster.local/oapi/v1/namespaces/$PROJECT_NAME/$api"
     curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
     -H "Authorization: Bearer $TOKEN" \
     -H 'Accept: application/json' \
@@ -33,7 +34,7 @@ while read api; do
 done < /restic-openshift-oapi.cfg
 
 while read api; do
-    echo "Backuping $api on https://openshift.default.svc.cluster.local/api/v1/namespaces/$PROJECT_NAME/$api"
+    echo "Perform backup $api on https://openshift.default.svc.cluster.local/api/v1/namespaces/$PROJECT_NAME/$api"
     curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
     -H "Authorization: Bearer $TOKEN" \
     -H 'Accept: application/json' \

@@ -2,7 +2,7 @@ FROM golang:1.9.1-alpine3.6
 MAINTAINER Vadim Zharov
 
 RUN echo http://nl.alpinelinux.org/alpine/v3.4/community >> /etc/apk/repositories
-RUN apk add --no-cache git nfs-utils openssh fuse curl
+RUN apk add --no-cache git nfs-utils openssh fuse curl postgresql mariadb-client
 RUN git clone https://github.com/restic/restic \
   && cd restic \
   && go run build.go \
@@ -17,7 +17,7 @@ ENV BACKUP_TYPE="metadata"
 ENV RESTIC_REPOSITORY=/mnt/restic
 #name of openshift project (script will take it automatically)
 ENV PROJECT_NAME="default"
-#custom tag. 
+#custom tag 
 ENV RESTIC_TAG="default"
 #how many copies we should store
 ENV RESTIC_KEEP=3
@@ -33,6 +33,16 @@ ENV RESTIC_S3_HOST=localhost
 ENV RESTIC_S3_PORT="9000"
 #token to get project metadata from API
 ENV TOKEN=""
+#DB type to perform backup (postgres/mysql)
+ENV DATABASE_TYPE="postgres"
+#PG username
+ENV PG_USER="postgres"
+#MYSQL username
+ENV MYSQL_USER="root"
+#DB Openshift service address
+ENV DATABASE_SVC="127.0.0.1"
+#DB password
+ENV DATABASE_PASSWORD="123qweASD"
 
 # /data is the dir where you have to put the data to be backed up
 VOLUME /data
@@ -40,9 +50,9 @@ VOLUME /data
 COPY entry.sh /entry.sh
 COPY files-backup.sh /files-backup.sh
 COPY metadata-backup.sh /metadata-backup.sh
-#file with API paths (kubernetes)
+#file with API endpoints (kubernetes)
 COPY restic-openshift-api.cfg /restic-openshift-api.cfg
-#file with API paths (openshift)
+#file with API endpoints (openshift)
 COPY restic-openshift-oapi.cfg /restic-openshift-oapi.cfg
 
 WORKDIR "/"

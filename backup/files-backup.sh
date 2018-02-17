@@ -22,25 +22,11 @@ restic backup /data --tag files --tag $PROJECT_NAME --tag $RESTIC_TAG --hostname
 rc=$?
 
 if [[ $rc == 0 ]]; then
-    echo "Backup successfull" 
+    echo "File backup using restic was successfull" 
 else
-    echo "Backup failed with Status ${rc}"
+    echo "File backup using restic command filed with status ${rc}"
     restic unlock
-exit
-
+    exit
 fi
 
-
-echo "==================================="
-echo "Starting prune process..."
-echo "-----------------------------------"
-
-restic forget --keep-last $RESTIC_KEEP --prune --tag files --tag $PROJECT_NAME --tag $RESTIC_TAG --cache-dir /tmp/
-
-echo "-----------------------------------"
-echo "Pruning complete!"
-echo "==================================="
-echo "Current backups in repositories:"
-
-restic snapshots
 
