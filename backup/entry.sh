@@ -25,11 +25,11 @@ echo ""
 case $BACKUP_TYPE in
     metadata)
         echo "Will try to backup project metadata"
-        metadata-backup.sh
+        ./metadata-backup.sh
         ;;
     files)
         echo "Will try to backup files from one PVC"
-        files-backup.sh
+        ./files-backup.sh
         ;;
 esac
 
