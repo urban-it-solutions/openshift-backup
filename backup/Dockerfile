@@ -14,7 +14,7 @@ RUN mkdir /mnt/restic
 #backup type - metadata/files/databases
 ENV BACKUP_TYPE="metadata"
 #destination for backup - full path (server address for s3, path for NFS (NFS was excluded))
-ENV RESTIC_REPOSITORY=/mnt/restic
+ENV RESTIC_REPOSITORY=""
 #name of openshift project (script will take it automatically)
 ENV PROJECT_NAME="default"
 #custom tag 
@@ -42,7 +42,7 @@ ENV MYSQL_USER="root"
 #DB Openshift service address
 ENV DATABASE_SVC="127.0.0.1"
 #DB password
-ENV DATABASE_PASSWORD="123qweASD"
+ENV DATABASE_PASSWORD=""
 
 # /data is the dir where you have to put the data to be backed up
 VOLUME /data

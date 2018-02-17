@@ -12,13 +12,15 @@ echo " Will keep $RESTIC_KEEP copies of data                                "
 echo " Will exclude files from target directory with mask $RESTIC_EXCLUDE   "
 echo "======================================================================"
 
-echo ""
+echo "\n"
 
 if [ $RESTIC_DESTINATION = "s3" ]; then
     echo "Will backup to S3 object store - $RESTIC_S3_HOST:$RESTIC_S3_PORT"
     export RESTIC_REPOSITORY=s3:http://$RESTIC_S3_HOST:$RESTIC_S3_PORT/$PROJECT_NAME/$BACKUP_TYPE/$RESTIC_TAG
     restic -r $RESTIC_REPOSITORY init
 fi
+
+echo ""
 
 case $BACKUP_TYPE in
     metadata)
