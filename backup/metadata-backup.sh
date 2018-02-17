@@ -5,8 +5,6 @@ echo "+=================================================+"
 echo "| Starting script to make PROJECT METADATA backup |"
 echo "+=================================================+"
 
-
-
 TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
 TMP_DIR=/var/tmp/$PROJECT_NAME
 mkdir -p $TMP_DIR

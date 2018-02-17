@@ -1,15 +1,16 @@
 #!/bin/sh
 set +e
 
-echo "+======================================================================+"
-echo "| Parameters:                                                          |"
-echo "| Will backup: $BACKUP_TYPE for project $PROJECT_NAME                  |"
-echo "| Destination: $RESTIC_REPOSITORY                                      |"
-echo "| Repository password: $RESTIC_PASSWORD                                |"
-echo "| Backup tag: $RESTIC_TAG                                              |"
-echo "| Will keep $RESTIC_KEEP copies of data                                |"
-echo "| Will exclude files from target directory with mask $RESTIC_EXCLUDE   |"
-echo "=======================================================================+"
+echo "======================================================================"
+echo " Parameters:                                                          "
+echo " Will backup: $BACKUP_TYPE for project $PROJECT_NAME                  "
+echo " Destination: $RESTIC_DESTINATION                                     "
+echo " Host $RESTIC_HOST:$RESTIC_PORT                                       "
+echo " Repository password: $RESTIC_PASSWORD                                "
+echo " Backup tag: $RESTIC_TAG                                              "
+echo " Will keep $RESTIC_KEEP copies of data                                "
+echo " Will exclude files from target directory with mask $RESTIC_EXCLUDE   "
+echo "======================================================================"
 
 echo ""
 
