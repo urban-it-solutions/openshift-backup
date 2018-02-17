@@ -1,16 +1,19 @@
 #!/bin/sh
 set +e
 
-echo "====================================================================="
-echo "Parameters:"
-echo "Source: /data"
-echo "Destination: "$RESTIC_REPOSITORY
-echo "Repository password: "$RESTIC_PASSWORD
-echo "Backup tag: " $RESTIC_TAG
-echo "Project name: " $PROJECT_NAME
-echo "Will keep $RESTIC_KEEP copies of data"
-echo "Will exclude files from target directory with mask $RESTIC_EXCLUDE"
-echo "====================================================================="
+echo "+======================================================================+"
+echo "| Parameters:                                                          |"
+echo "| Will backup: $BACKUP_TYPE                                            |"
+echo "| Source: /data                                                        |" 
+echo "| Destination: $RESTIC_REPOSITORY                                      |"
+echo "| Repository password: $RESTIC_PASSWORD                                |"
+echo "| Backup tag: $RESTIC_TAG                                              |"
+echo "| Project name: $PROJECT_NAME                                          |"
+echo "| Will keep $RESTIC_KEEP copies of data                                |"
+echo "| Will exclude files from target directory with mask $RESTIC_EXCLUDE   |"
+echo "=======================================================================+"
+
+echo ""
 
 if [ $RESTIC_DESTINATION = "s3" ]; then
     echo "Will backup to S3 object store - $RESTIC_S3_HOST:$RESTIC_S3_PORT"
@@ -27,4 +30,37 @@ case $BACKUP_TYPE in
         files-backup.sh
 esac
 
-echo "Job done"
+rc=$?
+
+if [[ $rc == 0 ]]; then
+    echo "Backup job finished successful" 
+else
+    echo "Backup failed with status ${rc}"
+    exit
+fi
+
+echo "+===================================+"
+echo "|Starting prune process...          |"
+echo "+===================================+"
+
+restic -r $RESTIC_REPOSITORY forget --keep-last $RESTIC_KEEP --prune --tag $BACKUP_TYPE --tag $PROJECT_NAME --tag $RESTIC_TAG --cache-dir /tmp/
+
+rc=$?
+
+if [[ $rc == 0 ]]; then
+    echo "Prune Successfull!" 
+else
+    echo "Prune Failed with Status ${rc}"
+    restic unlock
+    exit
+fi
+
+echo "==================================="
+echo ""
+echo "+==================================+"
+echo "| Current backups in repositories: |"
+echo "+==================================+"
+
+restic -r $RESTIC_REPOSITORY snapshots --cache-dir /tmp/
+
+echo "Finished."

@@ -48,34 +48,13 @@ restic -r $RESTIC_REPOSITORY backup $TMP_DIR/*.json --tag metadata --tag $PROJEC
 rc=$?
 
 if [[ $rc == 0 ]]; then
-    echo "Backup Successfull" 
+    echo "Metadata backup using restic successfull" 
 else
-    echo "Backup Failed with Status ${rc}"
+    echo "Metadata backup using restic command filed with status ${rc}"
     restic unlock
     exit
 fi
 
 
-echo "==================================="
-echo "Starting prune process..."
-echo "-----------------------------------"
-
-restic -r $RESTIC_REPOSITORY forget --keep-last $RESTIC_KEEP --prune --tag metadata --tag $PROJECT_NAME --tag $RESTIC_TAG --cache-dir /tmp/
-
-rc=$?
-
-if [[ $rc == 0 ]]; then
-    echo "Prune Successfull" 
-else
-    echo "Prune Failed with Status ${rc}"
-    restic unlock
-    exit
-fi
 
 
-echo "-----------------------------------"
-echo "Pruning complete!"
-echo "==================================="
-echo "Current backups in repositories:"
-
-restic -r $RESTIC_REPOSITORY snapshots --cache-dir /tmp/
