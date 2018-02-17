@@ -36,8 +36,10 @@ objects:
         spec:
           containers:
           - name: project-metadata-backup
-            image: docker-registry.default.svc:5000/openshift/openshift-backup-metadata:latest
+            image: docker-registry.default.svc:5000/openshift/openshift-backup-image:latest
             env:
+              - name: BACKUP_TYPE
+                value: ${BACKUP_TYPE}
               - name: RESTIC_PASSWORD
                 value: ${RESTIC_PASSWORD}
               - name: PROJECT_NAME
@@ -58,6 +60,9 @@ objects:
           serviceAccountName: backup-sa
           restartPolicy: Never
 parameters:
+  - name: BACKUP_TYPE
+    value: metadata
+    required: true
   - name: RESTIC_PASSWORD 
     displayName: Password for restic repository
     description: Password for restic repository. If repository doesn't exist - script will create it. 
@@ -65,7 +70,7 @@ parameters:
     required: true 
   - name: CUSTOM_TAG
     description: Custom backup tag. You can put whatever you want here.
-    value: my_backup
+    value: metadata
     required: true 
   - name: RESTIC_DESTINATION
     description: Destination to store backups. Currently only S3 is supported
