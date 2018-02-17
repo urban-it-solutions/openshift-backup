@@ -23,8 +23,7 @@ oc get pvc --no-headers=true | awk '{print $1}'
 
 oc get pvc --no-headers=true | awk '{print $1}' | while read -r pvc ; do
     echo "Processing $pvc"
-    # your code goes here now
-    oc process backup-project-files	-p=CUSTOM_TAG=$pvc -p=JOB_NAME=backup-files-from-pvc-$pvc
+    oc delete job backup-files-from-pvc-$pvc
     oc process backup-project-files	-p=CUSTOM_TAG=$pvc -p=JOB_NAME=backup-files-from-pvc-$pvc | oc create -f -
 done
 

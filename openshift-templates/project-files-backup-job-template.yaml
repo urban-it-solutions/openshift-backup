@@ -9,7 +9,7 @@ objects:
   - kind: Job
     apiVersion: batch/v1
     metadata:
-      name: project-files-backup
+      name: ${JOB_NAME}
       annotations:
         description: Backup project files from one PVC
     spec:
