@@ -21,7 +21,7 @@ objects:
         spec:
           containers:
           - name: ${JOB_NAME}
-            image: docker-registry.default.svc:5000/openshift/openshift-backup:latest
+            image: docker-registry.default.svc:5000/openshift/openshift-backup-image:latest
             env:
               - name: BACKUP_TYPE
                 value: ${BACKUP_TYPE}
