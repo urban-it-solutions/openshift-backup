@@ -12,7 +12,6 @@ echo " Will keep $RESTIC_KEEP copies of data                                "
 echo " Will exclude files from target directory with mask $RESTIC_EXCLUDE   "
 echo "======================================================================"
 
-echo "\n"
 
 if [ $RESTIC_DESTINATION = "s3" ]; then
     echo "Will backup to S3 object store - $RESTIC_S3_HOST:$RESTIC_S3_PORT"
@@ -32,7 +31,7 @@ case $BACKUP_TYPE in
         ./files-backup.sh
         ;;
     databases)
-        echo "Will try to backup databases according to config files"
+        echo "Will try to backup database"
         ./databases-backup.sh
         ;;
 esac

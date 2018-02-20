@@ -20,24 +20,46 @@ RUN apk del git
 
 RUN mkdir /mnt/restic
 
-ENV RESTIC_REPOSITORY=/mnt/restic
+#backup type - metadata/files/databases
+ENV BACKUP_TYPE="metadata"
+#destination for backup - full path (server address for s3, path for NFS (NFS was excluded))
+ENV RESTIC_REPOSITORY=""
+#name of openshift project (script will take it automatically)
 ENV PROJECT_NAME="default"
+#custom tag 
 ENV RESTIC_TAG="default"
+#how many copies we should store
 ENV RESTIC_KEEP=3
-ENV RESTIC_EXCLUDE=""
-ENV RESTIC_DESTINATION="nfs"
+#which files we should exclude from backup (see restic docs for details)
+ENV RESTIC_EXCLUDE=".zfs"
+#destintation for backup - s3 or NFS (NFS was excluded)
+ENV RESTIC_DESTINATION="s3"
+#S3 credentials
 ENV AWS_ACCESS_KEY_ID=""
 ENV AWS_SECRET_ACCESS_KEY=""
+#s3 host/port
 ENV RESTIC_S3_HOST=localhost
 ENV RESTIC_S3_PORT="9000"
+#token to get project metadata from API
 ENV TOKEN=""
+#DB type to perform backup (postgres/mysql)
+ENV DATABASE_TYPE="postgres"
+#PG username
+ENV DATABASE_USER="postgres"
+#DB Openshift service address
+ENV DATABASE_SVC="127.0.0.1"
+#DB password
+ENV DATABASE_PASSWORD=""
+#SNAPSHOT ID 
 ENV RESTIC_SNAPSHOT="latest"
 
 
-# /data is the dir where you have to put the data to be backed up
+# /data is the dir to restore data
 VOLUME /data
 
 COPY entry.sh /entry.sh
+COPY metadata-restore.sh /metadata-restore.sh
+COPY files-restore.sh /files-restore.sh
 COPY restic-openshift-api.cfg /restic-openshift-api.cfg
 COPY restic-openshift-oapi.cfg /restic-openshift-oapi.cfg
 
