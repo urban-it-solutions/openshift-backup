@@ -32,7 +32,7 @@ objects:
                   fieldRef:
                     fieldPath: metadata.namespace  
               - name: RESTIC_TAG
-                value: ${CUSTOM_TAG}
+                value: ${DATABASE_SVC}
               - name: RESTIC_DESTINATION
                 value: ${RESTIC_DESTINATION}
               - name: AWS_ACCESS_KEY_ID

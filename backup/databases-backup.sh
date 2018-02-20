@@ -8,7 +8,7 @@ echo "+====================================================+"
 case $DATABASE_TYPE in
     postgresql)
         echo "Will try to backup postgresql on service $DATABASE_SVC with user $DATABASE_USER and password $DATABASE_PASSWORD"
-        export PGPQSSWORD=$DATABASE_PASSWORD
+        export PGPASSWORD=$DATABASE_PASSWORD
         pg_dumpall -h $DATABASE_SVC -U $DATABASE_USER | restic backup -r $RESTIC_REPOSITORY --tag databases --tag $PROJECT_NAME --tag $DATABASE_SVC --hostname $PROJECT_NAME --stdin --stdin-filename $DATABASE_SVC.sql --cache-dir /tmp/    
         ;;
     mysql)
