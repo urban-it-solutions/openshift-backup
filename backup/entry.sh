@@ -31,6 +31,10 @@ case $BACKUP_TYPE in
         echo "Will try to backup files from one PVC"
         ./files-backup.sh
         ;;
+    databases)
+        echo "Will try to backup databases according to config files"
+        ./databases-backup.sh
+        ;;
 esac
 
 rc=$?
