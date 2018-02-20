@@ -1,0 +1,91 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: restore-project-metadata
+  annotations:
+    description: "Template creates job to restore all project metadata.
+      It requires service account to work correctly and also creates it (backup-sa)."
+    tags: "restore"
+objects:
+  - kind: ServiceAccount
+    apiVersion: v1
+    metadata:
+      name: backup-sa
+  - kind: RoleBinding
+    apiVersion: v1
+    metadata:
+      name: api_POST_for_restore
+    roleRef:
+      name: edit
+    subjects:
+    - kind: ServiceAccount
+      name: backup-sa  
+  - kind: Job
+    apiVersion: batch/v1
+    metadata:
+      name: project-metadata-restore
+      annotations:
+        description: Restore project metadata
+    spec:
+      parallelism: 1
+      completions: 1
+      template:
+        metadata:
+          name: project-metadata-restore
+        spec:
+          containers:
+          - name: project-metadata-restore
+            image: docker-registry.default.svc:5000/openshift/openshift-restore-image:latest
+            env:
+              - name: BACKUP_TYPE
+                value: ${BACKUP_TYPE}
+              - name: RESTIC_PASSWORD
+                value: ${RESTIC_PASSWORD}
+              - name: PROJECT_NAME
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.namespace  
+              - name: RESTIC_TAG
+                value: metadata
+              - name: RESTIC_DESTINATION
+                value: ${RESTIC_DESTINATION}
+              - name: AWS_ACCESS_KEY_ID
+                value: ${AWS_ACCESS_KEY}
+              - name: AWS_SECRET_ACCESS_KEY
+                value: ${AWS_SECRET_ACCESS_KEY}
+              - name: RESTIC_S3_HOST
+                value: ${RESTIC_HOST}
+              - name: RESTIC_SNAPSHOT
+                value: ${RESTIC_SNAPSHOT}
+          serviceAccount: backup-sa
+          serviceAccountName: backup-sa
+          restartPolicy: Never
+parameters:
+  - name: BACKUP_TYPE
+    value: metadata
+  - name: RESTIC_PASSWORD 
+    displayName: Password for restic repository
+    description: Password for your current restic repository. No password - no restore. 
+    value: 123qweASD
+    required: true 
+  - name: RESTIC_DESTINATION
+    description: Access protocol to access to your restic repository. Currently only S3 is supported
+    value: s3
+    required: true
+  - name: RESTIC_HOST
+    description: Server where your data placed
+    value: jump02.home.msk
+    required: true
+  - name: AWS_ACCESS_KEY
+    description: Access key for your S3 server
+    value: 123qweASD
+    required: true
+  - name: AWS_SECRET_ACCESS_KEY
+    description: Secret access key for your S3 server
+    value: 123qweASD
+    required: true
+  - name: RESTIC_SNAPSHOT
+    description: Snapshot ID. Default parameter is latest (restore from last backup)
+    value: latest
+labels:
+  openshift-restore: metadata

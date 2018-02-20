@@ -68,10 +68,6 @@ parameters:
     description: Password for restic repository. If repository doesn't exist - script will create it. 
     value: 123qweASD
     required: true 
-  - name: CUSTOM_TAG
-    description: Custom backup tag. You can put whatever you want here.
-    value: metadata
-    required: true 
   - name: RESTIC_DESTINATION
     description: Destination to store backups. Currently only S3 is supported
     value: s3
