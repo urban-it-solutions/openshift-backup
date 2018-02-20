@@ -50,6 +50,7 @@ VOLUME /data
 COPY entry.sh /entry.sh
 COPY files-backup.sh /files-backup.sh
 COPY metadata-backup.sh /metadata-backup.sh
+COPY databases-backup.sh /databases-backup.sh
 #file with API endpoints (kubernetes)
 COPY restic-openshift-api.cfg /restic-openshift-api.cfg
 #file with API endpoints (openshift)

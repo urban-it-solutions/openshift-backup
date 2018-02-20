@@ -23,6 +23,6 @@ while read DBPARAM; do
 done < /mysql_backup
 
 restic backup /mysql_backup --tag databases --tag $PROJECT_NAME --tag $RESTIC_TAG --hostname $PROJECT_NAME --cache-dir /tmp/ 2>&1
-restic backup /pg_backup --tag databases --tag $PROJECT_NAME --tag $RESTIC_TAG --hostname $PROJECT_NAME --cache-dir /tmp/ 2>&1
 
+restic backup /pg_backup --tag databases --tag $PROJECT_NAME --tag $RESTIC_TAG --hostname $PROJECT_NAME --cache-dir /tmp/ 2>&1
 
