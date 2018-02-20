@@ -26,4 +26,8 @@ else
     exit
 fi
 
+echo "Writing credentials into file /credentials"
+echo "$DATABASE_SVC $DATABASE_USER $DATABASE_PASSWORD" > /credentials
+restic backup /credentials --tag databases --tag $PROJECT_NAME --tag $RESTIC_TAG --hostname $PROJECT_NAME --cache-dir /tmp/ 2>&1
+
 
