@@ -36,9 +36,7 @@ ENV TOKEN=""
 #DB type to perform backup (postgres/mysql)
 ENV DATABASE_TYPE="postgres"
 #PG username
-ENV PG_USER="postgres"
-#MYSQL username
-ENV MYSQL_USER="root"
+ENV DATABASE_USER="postgres"
 #DB Openshift service address
 ENV DATABASE_SVC="127.0.0.1"
 #DB password

@@ -1,0 +1,99 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: backup-project-databases
+  annotations:
+    description: "Template creates job to run database (MYSQL and PGSQL) backup."
+    tags: "backup"
+objects:
+  - kind: Job
+    apiVersion: batch/v1
+    metadata:
+      name: ${JOB_NAME}
+      annotations:
+        description: Backup project database
+    spec:
+      parallelism: 1
+      completions: 1
+      template:
+        metadata:
+          name: project-database-backup
+        spec:
+          containers:
+          - name: ${JOB_NAME}
+            image: docker-registry.default.svc:5000/openshift/openshift-backup-image:latest
+            env:
+              - name: BACKUP_TYPE
+                value: ${BACKUP_TYPE}
+              - name: RESTIC_PASSWORD
+                value: ${RESTIC_PASSWORD}
+              - name: PROJECT_NAME
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.namespace  
+              - name: RESTIC_TAG
+                value: ${CUSTOM_TAG}
+              - name: RESTIC_DESTINATION
+                value: ${RESTIC_DESTINATION}
+              - name: AWS_ACCESS_KEY_ID
+                value: ${AWS_ACCESS_KEY}
+              - name: AWS_SECRET_ACCESS_KEY
+                value: ${AWS_SECRET_ACCESS_KEY}
+              - name: RESTIC_S3_HOST
+                value: ${RESTIC_HOST}
+              - name: DATABASE_TYPE
+                value: ${DATABASE_TYPE}
+              - name: DATABASE_SVC
+                value: ${DATABASE_SVC}
+              - name: DATABASE_USER
+                value: ${DATABASE_USER}
+              - name: DATABASE_PASSWORD
+                value: ${DATABASE_PASSWORD}
+          restartPolicy: Never
+parameters:
+  - name: BACKUP_TYPE
+    value: databases
+    required: true
+  - name: RESTIC_PASSWORD 
+    displayName: Password for restic repository
+    description: Password for restic repository. If repository doesn't exist - script will create it. 
+    value: 123qweASD
+    required: true 
+  - name: RESTIC_DESTINATION
+    description: Destination to store backups. Currently only S3 is supported
+    value: s3
+    required: true
+  - name: RESTIC_HOST
+    description: Server where you plan to store your backups
+    value: jump02.home.msk
+    required: true
+  - name: AWS_ACCESS_KEY
+    description: Access key for your S3 server
+    value: 123qweASD
+    required: true
+  - name: AWS_SECRET_ACCESS_KEY
+    description: Secret access key for your S3 server
+    value: 123qweASD
+    required: true
+  - name: DATABASE_TYPE
+    description: Type of database to make backup. Values is postgresql and mysql.
+    value: postgresql
+    required: true
+  - name: DATABASE_SVC
+    description: DNS name or IP address of exposed database service
+    value: postgresql
+    required: true
+  - name: DATABASE_USER
+    description: Username to access database
+    value: postgresql
+    required: true
+  - name: DATABASE_PASSWORD
+    description: Password to access database
+    value: postgresql
+    required: true
+  - name: JOB_NAME
+    description: Job's name
+    value: project-databases-backup
+    required: true
+labels:
+  openshift-backup: files
