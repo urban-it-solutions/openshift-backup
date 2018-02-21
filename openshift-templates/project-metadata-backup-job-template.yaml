@@ -56,6 +56,8 @@ objects:
                 value: ${AWS_SECRET_ACCESS_KEY}
               - name: RESTIC_S3_HOST
                 value: ${RESTIC_HOST}
+              - name: RESTIC_S3_PORT
+                value: ${RESTIC_S3_PORT}
           serviceAccount: backup-sa
           serviceAccountName: backup-sa
           restartPolicy: Never
@@ -75,6 +77,10 @@ parameters:
   - name: RESTIC_HOST
     description: Server where you plan to store your backups
     value: jump02.home.msk
+    required: true
+  - name: RESTIC_S3_PORT
+    description: Port
+    value: '9000'
     required: true
   - name: AWS_ACCESS_KEY
     description: Access key for your S3 server
