@@ -3,7 +3,7 @@ apiVersion: v1
 metadata:
   name: backup-project-files
   annotations:
-    description: "Template creates job to run files backup from one PVC."
+    description: "Template creates job to backup all files from one PVC."
     tags: "backup"
 objects:
   - kind: Job

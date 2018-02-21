@@ -1,7 +1,7 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: backup-project-files
+  name: backup-project-all-files
   annotations:
     description: "Template creates job to run files backup from ALL PVC in the project"
     tags: "backup"
@@ -22,7 +22,7 @@ objects:
   - kind: Job
     apiVersion: batch/v1
     metadata:
-      name: project-all-files-backup
+      name: ${JOB_NAME}
       annotations:
         description: Backup project files from ALL PVCs
     spec:
@@ -74,6 +74,11 @@ parameters:
   - name: AWS_SECRET_ACCESS_KEY
     description: Secret access key for your S3 server
     value: 123qweASD
+    required: true
+  - name: JOB_NAME
+    displayName: Name of the job
+    description: Enter name of the job. It have to be unique in the project
+    value: project-all-files-backup
     required: true
 labels:
   openshift-backup: all-files
