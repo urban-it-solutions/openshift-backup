@@ -31,7 +31,7 @@ else
 fi
 
 echo "+================================+"
-echo "| Starting project metadata      |"
+echo "| Starting metadata restore...   |"
 echo "+================================+"
 
 while read api; do

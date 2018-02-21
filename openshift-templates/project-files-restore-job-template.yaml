@@ -1,42 +1,27 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: backup-project-metadata
+  name: restore-project-files
   annotations:
-    description: "Template creates job to run all project metadata backup.
-      It requires service account to work correctly and also creates it (backup-sa).
-      It will initiate restic repository if needed."
-    tags: "backup"
+    description: "Template creates job to restore files in one PVC. If PVC not exists - restore will be canceled. "
+    tags: "restore"
 objects:
-  - kind: ServiceAccount
-    apiVersion: v1
-    metadata:
-      name: backup-sa
-  - kind: RoleBinding
-    apiVersion: v1
-    metadata:
-      name: api_GET_for_backup
-    roleRef:
-      name: edit
-    subjects:
-    - kind: ServiceAccount
-      name: backup-sa  
   - kind: Job
     apiVersion: batch/v1
     metadata:
       name: ${JOB_NAME}
       annotations:
-        description: Backup project metadata
+        description: Restore project files
     spec:
       parallelism: 1
       completions: 1
       template:
         metadata:
-          name: project-metadata-backup
+          name: project-files-restore
         spec:
           containers:
-          - name: project-metadata-backup
-            image: docker-registry.default.svc:5000/openshift/openshift-backup-image:latest
+          - name: ${JOB_NAME}
+            image: docker-registry.default.svc:5000/openshift/openshift-restore-image:latest
             env:
               - name: BACKUP_TYPE
                 value: ${BACKUP_TYPE}
@@ -47,7 +32,7 @@ objects:
                   fieldRef:
                     fieldPath: metadata.namespace  
               - name: RESTIC_TAG
-                value: metadata
+                value: ${CUSTOM_TAG}
               - name: RESTIC_DESTINATION
                 value: ${RESTIC_DESTINATION}
               - name: AWS_ACCESS_KEY_ID
@@ -56,24 +41,34 @@ objects:
                 value: ${AWS_SECRET_ACCESS_KEY}
               - name: RESTIC_S3_HOST
                 value: ${RESTIC_HOST}
-          serviceAccount: backup-sa
-          serviceAccountName: backup-sa
+              - name: RESTIC_SNAPSHOT
+                value: ${RESTIC_SNAPSHOT}
+            volumeMounts:
+              - mountPath: /data
+                name: backup-target
           restartPolicy: Never
+          volumes:
+            - name: backup-target
+              persistentVolumeClaim:
+                claimName: ${CUSTOM_TAG}
 parameters:
   - name: BACKUP_TYPE
-    value: metadata
+    value: files
+  - name: CUSTOM_TAG
+    displayName: Name of PVC
+    description: Enter name of PVC which you want to restore. If PVC not exists - restore will be canceled. 
     required: true
   - name: RESTIC_PASSWORD 
     displayName: Password for restic repository
-    description: Password for restic repository. If repository doesn't exist - script will create it. 
+    description: Password for your current restic repository. No password - no restore. 
     value: 123qweASD
     required: true 
   - name: RESTIC_DESTINATION
-    description: Destination to store backups. Currently only S3 is supported
+    description: Access protocol to access to your restic repository. Currently only S3 is supported
     value: s3
     required: true
   - name: RESTIC_HOST
-    description: Server where you plan to store your backups
+    description: Server where your data placed
     value: jump02.home.msk
     required: true
   - name: AWS_ACCESS_KEY
@@ -84,9 +79,13 @@ parameters:
     description: Secret access key for your S3 server
     value: 123qweASD
     required: true
+  - name: RESTIC_SNAPSHOT
+    description: Snapshot ID. Default parameter is latest (restore from last backup)
+    value: latest
+    required: true
   - name: JOB_NAME
     description: Job's name
-    value: project-metadata-backup
+    value: project-files-restore
     required: true
 labels:
-  openshift-backup: metadata
+  openshift-restore: files
