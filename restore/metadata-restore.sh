@@ -14,8 +14,6 @@ restic -r $RESTIC_REPOSITORY snapshots --cache-dir /tmp/
 
 echo "=============================================================="
 
-#restic -r $RESTIC_REPOSITORY backup $TMP_DIR/*.yaml --tag metadata --tag $PROJECT_NAME --tag $RESTIC_TAG --hostname $PROJECT_NAME --cache-dir /tmp/ 2>&1
-
 echo "Restoring metadata using snapshot ${RESTIC_SNAPSHOT}"
 
 restic -r $RESTIC_REPOSITORY restore $RESTIC_SNAPSHOT --target $TMP_DIR --cache-dir /tmp/

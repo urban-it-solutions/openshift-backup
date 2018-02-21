@@ -1,0 +1,108 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: prepare-for-backup
+  annotations:
+    description: "Template creates required OpenShift opbjects (templates and service accounts)
+      to perform all kind of backup (project metadata, files, databases)"
+    tags: "backup"
+objects:
+  - kind: ServiceAccount
+    apiVersion: v1
+    metadata:
+      name: backup-sa
+  - kind: RoleBinding
+    apiVersion: v1
+    metadata:
+      name: api_GET_for_backup
+    roleRef:
+      name: edit
+    subjects:
+    - kind: ServiceAccount
+      name: backup-sa
+  - kind: Template
+    apiVersion: v1
+    metadata:
+      name: backup-project-metadata
+      annotations:
+        description: "Template creates job to run all project metadata backup.
+          It requires service account to work correctly (backup-sa).
+          It will initiate restic repository if needed."
+        tags: "backup"
+    objects:
+    - kind: Job
+      apiVersion: batch/v1
+      metadata:
+        name: ${JOB_NAME}
+        annotations:
+          description: Backup project metadata
+      spec:
+        parallelism: 1
+        completions: 1
+        template:
+          metadata:
+            name: project-metadata-backup
+          spec:
+            containers:
+            - name: project-metadata-backup
+              image: docker-registry.default.svc:5000/openshift/openshift-backup-image:latest
+              env:
+                - name: BACKUP_TYPE
+                  value: ${BACKUP_TYPE}
+                - name: RESTIC_PASSWORD
+                  value: ${RESTIC_PASSWORD}
+                - name: PROJECT_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace  
+                - name: RESTIC_TAG
+                  value: metadata
+                - name: RESTIC_DESTINATION
+                  value: ${RESTIC_DESTINATION}
+                - name: AWS_ACCESS_KEY_ID
+                  value: ${AWS_ACCESS_KEY}
+                - name: AWS_SECRET_ACCESS_KEY
+                  value: ${AWS_SECRET_ACCESS_KEY}
+                - name: RESTIC_S3_HOST
+                  value: ${RESTIC_HOST}
+                - name: RESTIC_S3_PORT
+                  value: ${RESTIC_S3_PORT}
+            serviceAccount: backup-sa
+            serviceAccountName: backup-sa
+            restartPolicy: Never
+    parameters:
+    - name: BACKUP_TYPE
+      value: metadata
+      required: true
+    - name: RESTIC_PASSWORD 
+      displayName: Password for restic repository
+      description: Password for restic repository. If repository doesn't exist - script will create it. 
+      value: 123qweASD
+      required: true 
+    - name: RESTIC_DESTINATION
+      description: Destination to store backups. Currently only S3 is supported
+      value: s3
+      required: true
+    - name: RESTIC_HOST
+      description: Server where you plan to store your backups
+      value: jump02.home.msk
+      required: true
+    - name: RESTIC_S3_PORT
+      description: Port
+      value: '9000'
+      required: true
+    - name: AWS_ACCESS_KEY
+      description: Access key for your S3 server
+      value: 123qweASD
+      required: true
+    - name: AWS_SECRET_ACCESS_KEY
+      description: Secret access key for your S3 server
+      value: 123qweASD
+      required: true
+    - name: JOB_NAME
+      description: Job's name
+      value: project-metadata-backup
+      required: true
+  labels:
+    openshift-backup: metadata
+    

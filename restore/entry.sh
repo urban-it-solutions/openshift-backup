@@ -13,11 +13,11 @@ echo "======================================================================"
 
 case $RESTIC_DESTINATION in
     s3)
-        echo "Will backup to S3 generic (like Minio) object store - $RESTIC_S3_HOST:$RESTIC_S3_PORT"
+        echo "Will restore from S3 generic (like Minio) object store - $RESTIC_S3_HOST:$RESTIC_S3_PORT"
         export RESTIC_REPOSITORY=s3:http://$RESTIC_S3_HOST:$RESTIC_S3_PORT/$PROJECT_NAME/$BACKUP_TYPE/$RESTIC_TAG
     ;;
     aws)
-        echo "Will backup to AMAZON S3 storage - $RESTIC_S3_HOST"
+        echo "Will restore from AMAZON S3 storage - $RESTIC_S3_HOST"
         export RESTIC_REPOSITORY=s3:$RESTIC_S3_HOST/$PROJECT_NAME/$BACKUP_TYPE/$RESTIC_TAG
     ;;
 esac
