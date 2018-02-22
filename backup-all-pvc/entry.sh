@@ -34,7 +34,7 @@ oc get pvc --no-headers=true | awk '{print $1}' | while read -r pvc ; do
     echo "Processing $pvc..."
     oc process backup-project-files	-p=CUSTOM_TAG=$pvc -p=JOB_NAME=backup-files-from-pvc-$pvc -p=RESTIC_DESTINATION=$RESTIC_DESTINATION \
     -p=RESTIC_S3_HOST=$RESTIC_S3_HOST -p=RESTIC_S3_PORT=$RESTIC_S3_PORT -p=RESTIC_EXCLUDE=$RESTIC_EXCLUDE -p=RESTIC_KEEP=$RESTIC_KEEP \ 
-    -p=AWS_ACCESS_KEY=$AWS_ACCESS_KEY_ID -p=AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY | oc create -f -
+    -p=AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -p=AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY | oc create -f -
 done
 
 

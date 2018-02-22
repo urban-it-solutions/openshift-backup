@@ -60,7 +60,7 @@ objects:
                 - name: RESTIC_DESTINATION
                   value: ${RESTIC_DESTINATION}
                 - name: AWS_ACCESS_KEY_ID
-                  value: ${AWS_ACCESS_KEY}
+                  value: ${AWS_ACCESS_KEY_ID}
                 - name: AWS_SECRET_ACCESS_KEY
                   value: ${AWS_SECRET_ACCESS_KEY}
                 - name: RESTIC_S3_HOST
@@ -92,7 +92,7 @@ objects:
       description: Port for s3 server
       value: ${GLOBAL_RESTIC_S3_PORT}
       required: true
-    - name: AWS_ACCESS_KEY
+    - name: AWS_ACCESS_KEY_ID
       description: Access key for your S3 server
       value: ${GLOBAL_AWS_ACCESS_KEY}
       required: true
@@ -138,7 +138,7 @@ objects:
                   - name: RESTIC_DESTINATION
                     value: ${RESTIC_DESTINATION}
                   - name: AWS_ACCESS_KEY_ID
-                    value: ${AWS_ACCESS_KEY}
+                    value: ${AWS_ACCESS_KEY_ID}
                   - name: AWS_SECRET_ACCESS_KEY
                     value: ${AWS_SECRET_ACCESS_KEY}
                   - name: RESTIC_S3_HOST
@@ -180,7 +180,7 @@ objects:
         description: Port for s3 server
         value: ${GLOBAL_RESTIC_S3_PORT}
         required: true
-      - name: AWS_ACCESS_KEY
+      - name: AWS_ACCESS_KEY_ID
         description: Access key for your S3 server
         value: ${GLOBAL_AWS_ACCESS_KEY}
         required: true
@@ -226,7 +226,7 @@ objects:
                   - name: RESTIC_DESTINATION
                     value: ${RESTIC_DESTINATION}
                   - name: AWS_ACCESS_KEY_ID
-                    value: ${AWS_ACCESS_KEY}
+                    value: ${AWS_ACCESS_KEY_ID}
                   - name: AWS_SECRET_ACCESS_KEY
                     value: ${AWS_SECRET_ACCESS_KEY}
                   - name: RESTIC_S3_HOST
@@ -280,7 +280,7 @@ objects:
         description: Port for s3 server
         value: ${GLOBAL_RESTIC_S3_PORT}
         required: true
-      - name: AWS_ACCESS_KEY
+      - name: AWS_ACCESS_KEY_ID
         description: Access key for your S3 server
         value: ${GLOBAL_AWS_ACCESS_KEY}
         required: true
@@ -322,7 +322,7 @@ objects:
                   - name: RESTIC_DESTINATION
                     value: ${RESTIC_DESTINATION}
                   - name: AWS_ACCESS_KEY_ID
-                    value: ${AWS_ACCESS_KEY}
+                    value: ${AWS_ACCESS_KEY_ID}
                   - name: AWS_SECRET_ACCESS_KEY
                     value: ${AWS_SECRET_ACCESS_KEY}
                   - name: RESTIC_S3_HOST
@@ -355,7 +355,7 @@ objects:
         description: Port for s3 server
         value: ${GLOBAL_RESTIC_S3_PORT}
         required: true
-      - name: AWS_ACCESS_KEY
+      - name: AWS_ACCESS_KEY_ID
         description: Access key for your S3 server
         value: ${GLOBAL_AWS_ACCESS_KEY}
         required: true
@@ -397,7 +397,7 @@ objects:
                   - name: RESTIC_DESTINATION
                     value: ${RESTIC_DESTINATION}
                   - name: AWS_ACCESS_KEY_ID
-                    value: ${AWS_ACCESS_KEY}
+                    value: ${AWS_ACCESS_KEY_ID}
                   - name: AWS_SECRET_ACCESS_KEY
                     value: ${AWS_SECRET_ACCESS_KEY}
                   - name: RESTIC_S3_HOST
@@ -437,7 +437,7 @@ objects:
                   - name: RESTIC_DESTINATION
                     value: ${RESTIC_DESTINATION}
                   - name: AWS_ACCESS_KEY_ID
-                    value: ${AWS_ACCESS_KEY}
+                    value: ${AWS_ACCESS_KEY_ID}
                   - name: AWS_SECRET_ACCESS_KEY
                     value: ${AWS_SECRET_ACCESS_KEY}
                   - name: RESTIC_S3_HOST
@@ -474,7 +474,7 @@ objects:
         description: Port for s3 server
         value: ${GLOBAL_RESTIC_S3_PORT}
         required: true
-      - name: AWS_ACCESS_KEY
+      - name: AWS_ACCESS_KEY_ID
         description: Access key for your S3 server
         value: ${GLOBAL_AWS_ACCESS_KEY}
         required: true
