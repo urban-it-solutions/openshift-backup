@@ -45,7 +45,7 @@ objects:
           spec:
             containers:
             - name: project-metadata-backup
-              image: vadimzharov/openshift-backup-image:latest
+              image: docker.io/vadimzharov/openshift-backup-image:latest
               env:
                 - name: BACKUP_TYPE
                   value: metadata
@@ -123,7 +123,7 @@ objects:
             spec:
               containers:
               - name: ${JOB_NAME}
-                image: vadimzharov/openshift-backup-image:latest
+                image: docker.io/vadimzharov/openshift-backup-image:latest
                 env:
                   - name: BACKUP_TYPE
                     value: files
@@ -211,7 +211,7 @@ objects:
             spec:
               containers:
               - name: ${JOB_NAME}
-                image: vadimzharov/openshift-backup-image:latest
+                image: docker.io/vadimzharov/openshift-backup-image:latest
                 env:
                   - name: BACKUP_TYPE
                     value: databases
@@ -311,7 +311,7 @@ objects:
             spec:
               containers:
               - name: project-all-files-backup
-                image: vadimzharov/openshift-backup-all-files:latest
+                image: docker.io/vadimzharov/openshift-backup-all-files:latest
                 env:
                   - name: RESTIC_PASSWORD
                     value: ${RESTIC_PASSWORD}
@@ -386,7 +386,7 @@ objects:
             spec:
               containers:
               - name: project-all-files-backup
-                image: vadimzharov/openshift-backup-all-files:latest
+                image: docker.io/vadimzharov/openshift-backup-all-files:latest
                 env:
                   - name: RESTIC_PASSWORD
                     value: ${RESTIC_PASSWORD}
@@ -422,7 +422,7 @@ objects:
             spec:
               containers:
               - name: project-metadata-backup
-                image: vadimzharov/openshift-backup-image:latest
+                image: docker.io/vadimzharov/openshift-backup-image:latest
                 env:
                   - name: BACKUP_TYPE
                     value: metadata
