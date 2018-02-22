@@ -5,7 +5,7 @@ echo "======================================================================"
 echo " Parameters:                                                          "
 echo " Will backup: $BACKUP_TYPE for project $PROJECT_NAME                  "
 echo " Destination: $RESTIC_DESTINATION                                     "
-echo " Host $RESTIC_S3_HOST:$RESTIC_S3_PORT                                       "
+echo " Host $RESTIC_HOST:$RESTIC_S3_PORT                                       "
 echo " Repository password: $RESTIC_PASSWORD                                "
 echo " Backup tag: $RESTIC_TAG                                              "
 echo " Will keep $RESTIC_KEEP copies of data                                "
@@ -15,12 +15,12 @@ echo "======================================================================"
 
 case $RESTIC_DESTINATION in
     s3)
-        echo "Will backup to S3 generic (like Minio) object store - $RESTIC_S3_HOST:$RESTIC_S3_PORT"
-        export RESTIC_REPOSITORY=s3:http://$RESTIC_S3_HOST:$RESTIC_S3_PORT/$PROJECT_NAME/$BACKUP_TYPE/$RESTIC_TAG
+        echo "Will backup to S3 generic (like Minio) object store - $RESTIC_HOST:$RESTIC_S3_PORT"
+        export RESTIC_REPOSITORY=s3:http://$RESTIC_HOST:$RESTIC_S3_PORT/$PROJECT_NAME/$BACKUP_TYPE/$RESTIC_TAG
     ;;
     aws)
-        echo "Will backup to AMAZON S3 storage - $RESTIC_S3_HOST"
-        export RESTIC_REPOSITORY=s3:$RESTIC_S3_HOST/$PROJECT_NAME/$BACKUP_TYPE/$RESTIC_TAG
+        echo "Will backup to AMAZON S3 storage - $RESTIC_HOST"
+        export RESTIC_REPOSITORY=s3:$RESTIC_HOST/$PROJECT_NAME/$BACKUP_TYPE/$RESTIC_TAG
     ;;
 esac
 

@@ -29,14 +29,14 @@ ENV RESTIC_KEEP=3
 #which files we should exclude from backup (see restic docs for details)
 ENV RESTIC_EXCLUDE=".zfs"
 #destintation for backup - aws (AMAZON S3 storage) or s3 (generic S3 server - like minio)
-#for aws restic repository will be s3:$RESTIC_S3_HOST, i.e. s3:s3.amazonaws.com/my_bucket, RESTIC_S3_HOST=s3.amazonaws.com/my_bucket
-#for s3 restic repository will be s3:http://$RESTIC_S3_HOST:$RESTIC_S3_PORT/
+#for aws restic repository will be s3:$RESTIC_HOST, i.e. s3:s3.amazonaws.com/my_bucket, RESTIC_HOST=s3.amazonaws.com/my_bucket
+#for s3 restic repository will be s3:http://$RESTIC_HOST:$RESTIC_S3_PORT/
 ENV RESTIC_DESTINATION="s3"
 #S3 credentials
 ENV AWS_ACCESS_KEY_ID=""
 ENV AWS_SECRET_ACCESS_KEY=""
 #s3 host/port
-ENV RESTIC_S3_HOST=localhost
+ENV RESTIC_HOST=localhost
 ENV RESTIC_S3_PORT="9000"
 #token to get project metadata from API
 ENV TOKEN=""

@@ -484,8 +484,9 @@ objects:
         displayName: Name of the job to backup all files
         description: Enter name of the job. It has to be unique in the project
         value: backup-whole-project-all-files
+        required: true        
       - name: JOB_NAME_METADATA
-        displayName: Name of the job to backup all files
+        displayName: Name of the job to backup project metadata
         description: Enter name of the job. It has to be unique in the project
         value: backup-whole-project-metadata
         required: true
