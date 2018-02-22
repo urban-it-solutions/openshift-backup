@@ -63,7 +63,7 @@ objects:
                   value: ${AWS_ACCESS_KEY_ID}
                 - name: AWS_SECRET_ACCESS_KEY
                   value: ${AWS_SECRET_ACCESS_KEY}
-                - name: RESTIC_S3_HOST
+                - name: RESTIC_HOST
                   value: ${RESTIC_HOST}
                 - name: RESTIC_S3_PORT
                   value: ${RESTIC_S3_PORT}
@@ -141,10 +141,18 @@ objects:
                     value: ${AWS_ACCESS_KEY_ID}
                   - name: AWS_SECRET_ACCESS_KEY
                     value: ${AWS_SECRET_ACCESS_KEY}
-                  - name: RESTIC_S3_HOST
+                  - name: RESTIC_HOST
                     value: ${RESTIC_HOST}
                   - name: RESTIC_S3_PORT
                     value: ${RESTIC_S3_PORT}
+                  - name: RESTIC_KEEP
+                    description: How many copies we should keep
+                    value: '3'
+                    required: true
+                  - name: RESTIC_EXCLUDE
+                    description: Which files we should exclude
+                    value: '.zfs'
+                    required: true                       
                 volumeMounts:
                   - mountPath: /data
                     name: backup-target
@@ -188,6 +196,14 @@ objects:
         description: Secret access key for your S3 server
         value: ${GLOBAL_AWS_SECRET_ACCESS_KEY}
         required: true
+      - name: RESTIC_KEEP
+        description: How many copies we should keep
+        value: '3'
+        required: true
+      - name: RESTIC_EXCLUDE
+        description: Which files we should exclude
+        value: '.zfs'
+        required: true          
   - kind: Template
     apiVersion: v1
     metadata:
@@ -229,7 +245,7 @@ objects:
                     value: ${AWS_ACCESS_KEY_ID}
                   - name: AWS_SECRET_ACCESS_KEY
                     value: ${AWS_SECRET_ACCESS_KEY}
-                  - name: RESTIC_S3_HOST
+                  - name: RESTIC_HOST
                     value: ${RESTIC_HOST}
                   - name: RESTIC_S3_PORT
                     value: ${RESTIC_S3_PORT}
@@ -325,10 +341,14 @@ objects:
                     value: ${AWS_ACCESS_KEY_ID}
                   - name: AWS_SECRET_ACCESS_KEY
                     value: ${AWS_SECRET_ACCESS_KEY}
-                  - name: RESTIC_S3_HOST
+                  - name: RESTIC_HOST
                     value: ${RESTIC_HOST}
                   - name: RESTIC_S3_PORT
                     value: ${RESTIC_S3_PORT}
+                  - name: RESTIC_KEEP
+                    value: ${RESTIC_KEEP}
+                  - name: RESTIC_EXCLUDE
+                    value: ${RESTIC_EXCLUDE}                           
               restartPolicy: Never
               serviceAccount: backup-sa
               serviceAccountName: backup-sa
@@ -363,6 +383,14 @@ objects:
         description: Secret access key for your S3 server
         value: ${GLOBAL_AWS_SECRET_ACCESS_KEY}
         required: true
+      - name: RESTIC_KEEP
+        description: How many copies we should keep
+        value: '3'
+        required: true
+      - name: RESTIC_EXCLUDE
+        description: Which files we should exclude
+        value: '.zfs'
+        required: true          
   - kind: Template
     apiVersion: v1
     metadata:
@@ -400,10 +428,14 @@ objects:
                     value: ${AWS_ACCESS_KEY_ID}
                   - name: AWS_SECRET_ACCESS_KEY
                     value: ${AWS_SECRET_ACCESS_KEY}
-                  - name: RESTIC_S3_HOST
+                  - name: RESTIC_HOST
                     value: ${RESTIC_HOST}
                   - name: RESTIC_S3_PORT
                     value: ${RESTIC_S3_PORT}
+                  - name: RESTIC_KEEP
+                    value: ${RESTIC_KEEP}
+                  - name: RESTIC_EXCLUDE
+                    value: ${RESTIC_EXCLUDE}                                        
               restartPolicy: Never
               serviceAccount: backup-sa
               serviceAccountName: backup-sa
@@ -440,7 +472,7 @@ objects:
                     value: ${AWS_ACCESS_KEY_ID}
                   - name: AWS_SECRET_ACCESS_KEY
                     value: ${AWS_SECRET_ACCESS_KEY}
-                  - name: RESTIC_S3_HOST
+                  - name: RESTIC_HOST
                     value: ${RESTIC_HOST}
                   - name: RESTIC_S3_PORT
                     value: ${RESTIC_S3_PORT}
@@ -482,6 +514,14 @@ objects:
         description: Secret access key for your S3 server
         value: ${GLOBAL_AWS_SECRET_ACCESS_KEY}
         required: true
+      - name: RESTIC_KEEP
+        description: How many copies we should keep
+        value: '3'
+        required: true
+      - name: RESTIC_EXCLUDE
+        description: Which files we should exclude
+        value: '.zfs'
+        required: true          
 parameters:
   - name: GLOBAL_RESTIC_PASSWORD 
     displayName: Password for restic repository
