@@ -34,14 +34,16 @@ echo "+=============================================+"
 
 sed -i '/pv.kubernetes.io/d' $TMP_DIR/$PROJECT_NAME-persistentvolumeclaims.yaml
 
-echo "+=============================================+"
-echo "| Check if there are storage classes exist    |"
-echo "+=============================================+"
+sed -i '/volumeName:/d' $TMP_DIR/$PROJECT_NAME-persistentvolumeclaims.yaml
 
-STORAGE_CLASS=$(oc get sc 2>&1)
+echo "+===============================================+"
+echo "| Check if there are any storage classes exist  |"
+echo "+===============================================+"
 
-if [[ $STORAGE_CLASS == "No resources found." ]]; then
-    echo "No storage clases found in your environment. Removing storage class definition from pvcs" 
+STORAGE_CLASS=`oc get sc`                                                       
+                                                                            
+if [ -z $STORAGE_CLASS ]; then
+    echo "No storage classes found in your environment. Removing storage class definition from pvcs" 
     sed -i '/storageClassName/d' $TMP_DIR/$PROJECT_NAME-persistentvolumeclaims.yaml
 else
     echo "Storage classes found in your environment:"
@@ -50,9 +52,6 @@ else
     echo "If storage class will not be found - you have to fix it by yourself!!!"
     echo "Means that you have to recreate PVCs manually"
 fi
-
-
-
 
 echo "+================================+"
 echo "| Starting metadata restore...   |"

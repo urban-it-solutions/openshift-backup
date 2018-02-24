@@ -9,7 +9,7 @@ case $DATABASE_TYPE in
     postgresql)
         echo "Will try to backup postgresql on service $DATABASE_SVC with user $DATABASE_USER and password $DATABASE_PASSWORD"
         export PGPASSWORD=$DATABASE_PASSWORD
-        pg_dumpall -h $DATABASE_SVC -U $DATABASE_USER | restic backup -r $RESTIC_REPOSITORY --tag databases --tag $PROJECT_NAME --tag $DATABASE_SVC --hostname $PROJECT_NAME --stdin --stdin-filename $DATABASE_SVC.sql --cache-dir /tmp/    
+        pg_dumpall -h $DATABASE_SVC -U $DATABASE_USER | restic backup -r $RESTIC_REPOSITORY --tag databases --tag $PROJECT_NAME --tag $DATABASE_SVC --hostname $PROJECT_NAME --stdin --stdin-filename $DATABASE_SVC.sql --cache-dir /tmp/
         ;;
     mysql)
         echo "Will try to backup mysql on service $DATABASE_SVC with user $DATABASE_USER and password $DATABASE_PASSWORD"
@@ -26,8 +26,7 @@ else
     exit
 fi
 
-echo "Writing credentials into file /credentials"
-echo "$DATABASE_SVC $DATABASE_USER $DATABASE_PASSWORD" > /credentials
-restic backup /credentials --tag databases --tag $PROJECT_NAME --tag $RESTIC_TAG --hostname $PROJECT_NAME --cache-dir /tmp/ 2>&1
-
+echo "Writing credentials into file $DATABASE_SVC.creds"
+echo "$DATABASE_SVC $DATABASE_USER $DATABASE_PASSWORD" | restic backup -r $RESTIC_REPOSITORY --tag databases --tag $PROJECT_NAME --tag $DATABASE_SVC --hostname $PROJECT_NAME --stdin --stdin-filename $DATABASE_SVC.creds --cache-dir /tmp/
+ 
 
