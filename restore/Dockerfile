@@ -2,7 +2,7 @@ FROM golang:1.9.1-alpine3.6
 MAINTAINER Vadim Zharov
 
 RUN echo http://nl.alpinelinux.org/alpine/v3.4/community >> /etc/apk/repositories
-RUN apk add --no-cache git nfs-utils openssh fuse curl wget
+RUN apk add --no-cache git nfs-utils openssh fuse curl wget postgresql mariadb-client
 RUN git clone https://github.com/restic/restic \
   && cd restic \
   && go run build.go \
