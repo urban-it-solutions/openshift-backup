@@ -34,13 +34,13 @@ echo "+================================+"
 
 while read api; do
     echo "Restoring $api for $PROJECT_NAME"
-    oc create -f $TMP_DIR/$PROJECT_NAME-$api.json
+    oc create -f $TMP_DIR/$PROJECT_NAME-$api.yaml
     echo "=============================================================="
 done < /restic-openshift-oapi.cfg
 
 while read api; do
     echo "Restoring $api for $PROJECT_NAME"
-    oc create -f $TMP_DIR/$PROJECT_NAME-$api.json
+    oc create -f $TMP_DIR/$PROJECT_NAME-$api.yaml
     echo "=============================================================="
 done < /restic-openshift-api.cfg
 
