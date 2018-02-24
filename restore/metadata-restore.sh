@@ -29,6 +29,12 @@ else
 fi
 
 echo "+================================+"
+echo "| Remove volumeName from pvc     |"
+echo "+================================+"
+
+sed -i '/volumeName:/d' $TMP_DIR/$PROJECT_NAME-persistent-volumeclaims.yaml
+
+echo "+================================+"
 echo "| Starting metadata restore...   |"
 echo "+================================+"
 
