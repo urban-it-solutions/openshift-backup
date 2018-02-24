@@ -45,7 +45,7 @@ while read api; do
 done < /restic-openshift-api.cfg
 
 echo "+================================+"
-echo "| Finished restoring process     |"
+echo "| Restoring process finished.    |"
 echo "+================================+"
 
 
