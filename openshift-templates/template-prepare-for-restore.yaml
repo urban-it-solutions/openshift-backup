@@ -151,10 +151,6 @@ objects:
                     value: ${RESTIC_HOST}
                   - name: RESTIC_S3_PORT
                     value: ${RESTIC_S3_PORT}
-                  - name: RESTIC_KEEP
-                    description: How many copies we should keep
-                    value: '3'
-                    required: true
                   - name: RESTIC_SNAPSHOT
                     description: Restic snapshot id
                     value: ${RESTIC_SNAPSHOT}
@@ -167,6 +163,8 @@ objects:
                 - name: backup-target
                   persistentVolumeClaim:
                     claimName: ${CUSTOM_TAG}
+              serviceAccount: restore-sa
+              serviceAccountName: restore-sa                    
     parameters:
       - name: JOB_NAME
         description: Name of the job. It has to be unique in the project (just add a number in the name)
@@ -206,10 +204,6 @@ objects:
       - name: AWS_SECRET_ACCESS_KEY
         description: Secret access key for your S3 server
         value: ${GLOBAL_AWS_SECRET_ACCESS_KEY}
-        required: true
-      - name: RESTIC_KEEP
-        description: How many copies we should keep
-        value: '3'
         required: true
       - name: RESTIC_EXCLUDE
         description: Which files we should exclude
@@ -264,10 +258,6 @@ objects:
                     value: ${DATABASE_TYPE}
                   - name: DATABASE_SVC
                     value: ${DATABASE_SVC}
-                  - name: DATABASE_USER
-                    value: ${DATABASE_USER}
-                  - name: DATABASE_PASSWORD
-                    value: ${DATABASE_PASSWORD}
               restartPolicy: Never
     parameters:
       - name: JOB_NAME
@@ -280,14 +270,6 @@ objects:
         required: true
       - name: DATABASE_SVC
         description: DNS name or IP address of exposed database service
-        value: postgresql
-        required: true
-      - name: DATABASE_USER
-        description: Username to access database
-        value: postgresql
-        required: true
-      - name: DATABASE_PASSWORD
-        description: Password to access database
         value: postgresql
         required: true
       - name: RESTIC_PASSWORD 
@@ -356,8 +338,6 @@ objects:
                     value: ${RESTIC_HOST}
                   - name: RESTIC_S3_PORT
                     value: ${RESTIC_S3_PORT}
-                  - name: RESTIC_KEEP
-                    value: ${RESTIC_KEEP}
                   - name: RESTIC_EXCLUDE
                     value: ${RESTIC_EXCLUDE}
                   - name: RESTIC_SNAPSHOT
@@ -395,10 +375,6 @@ objects:
       - name: AWS_SECRET_ACCESS_KEY
         description: Secret access key for your S3 server
         value: ${GLOBAL_AWS_SECRET_ACCESS_KEY}
-        required: true
-      - name: RESTIC_KEEP
-        description: How many copies we should keep
-        value: '3'
         required: true
       - name: RESTIC_EXCLUDE
         description: Which files we should exclude

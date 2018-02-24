@@ -62,6 +62,7 @@ VOLUME /data
 COPY entry.sh /entry.sh
 COPY metadata-restore.sh /metadata-restore.sh
 COPY files-restore.sh /files-restore.sh
+COPY databases-restore.sh /databases-restore.sh
 COPY restic-openshift-api.cfg /restic-openshift-api.cfg
 COPY restic-openshift-oapi.cfg /restic-openshift-oapi.cfg
 
