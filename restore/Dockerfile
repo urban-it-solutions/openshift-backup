@@ -65,6 +65,8 @@ COPY files-restore.sh /files-restore.sh
 COPY restic-openshift-api.cfg /restic-openshift-api.cfg
 COPY restic-openshift-oapi.cfg /restic-openshift-oapi.cfg
 
+USER root
+
 WORKDIR "/"
 
 ENTRYPOINT ["/entry.sh"]

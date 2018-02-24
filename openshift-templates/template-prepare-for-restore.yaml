@@ -4,29 +4,31 @@ metadata:
   name: prepare-for-restore
   annotations:
     description: "Template creates required OpenShift objects (templates and service accounts)
-      to perform all kind of restore your data (project metadata, files, databases)"
+      to perform all kind of restore your data (project metadata, files, databases)
+      In some cases this job has to be run as root (to set correct ownership for restored files.
+      The template will create service account restore-sa to do it, but you have to setup correct SCC (anyuid)"
     tags: "restore"
 objects:
   - kind: ServiceAccount
     apiVersion: v1
     metadata:
-      name: backup-sa
+      name: restore-sa
   - kind: RoleBinding
     apiVersion: v1
     metadata:
-      name: api_GET_for_backup
+      name: api_CREATE_for_restore
     roleRef:
       name: edit
     subjects:
     - kind: ServiceAccount
-      name: backup-sa
+      name: restore-sa
   - kind: Template
     apiVersion: v1
     metadata:
       name: restore-project-metadata
       annotations:
-        description: "Template creates job to run all project metadata retore from your backup. 
-          It requires service account to work correctly (backup-sa)."
+        description: "Template creates job to run project metadata retore from your backup. 
+          It requires service account to work correctly (restore-sa)."
         tags: "restore"
     objects:
     - kind: Job
@@ -66,8 +68,8 @@ objects:
                   value: ${RESTIC_HOST}
                 - name: RESTIC_S3_PORT
                   value: ${RESTIC_S3_PORT}
-            serviceAccount: backup-sa
-            serviceAccountName: backup-sa
+            serviceAccount: restore-sa
+            serviceAccountName: restore-sa
             restartPolicy: Never
     parameters:
     - name: JOB_NAME
@@ -153,14 +155,13 @@ objects:
                     description: How many copies we should keep
                     value: '3'
                     required: true
-                  - name: RESTIC_EXCLUDE
-                    description: Which files we should exclude
-                    value: '.zfs'
+                  - name: RESTIC_SNAPSHOT
+                    description: Restic snapshot id
+                    value: ${RESTIC_SNAPSHOT}
                     required: true                       
                 volumeMounts:
                   - mountPath: /data
                     name: backup-target
-                    readOnly: true
               restartPolicy: Never
               volumes:
                 - name: backup-target
@@ -169,7 +170,7 @@ objects:
     parameters:
       - name: JOB_NAME
         description: Name of the job. It has to be unique in the project (just add a number in the name)
-        value: project-files-backup
+        value: project-files-restore
         required: true
       - name: RESTIC_PASSWORD 
         displayName: Password for restic repository
@@ -180,6 +181,11 @@ objects:
         displayName: Enter name of PVC
         description: Type persistent volume claim name (in your project)
         value: postgresql
+        required: true 
+      - name: RESTIC_SNAPSHOT
+        displayName: Snapshot id in restic.
+        description: Id of the snapshot. For latest use 'latest'.
+        value: latest
         required: true 
       - name: RESTIC_DESTINATION
         description: Destination to store backups. Set up 'aws' (AMAZON S3 storage) or 's3' (generic S3 server - like minio)
@@ -314,7 +320,7 @@ objects:
     metadata:
       name: restore-project-all-files
       annotations:
-        description: "Template creates job to run files restore for ALL PVC in the project. PVCs have to be presented!!"
+        description: "Template creates job to run files restore for ALL PVC in the project (using latest snapshot). PVCs have to be presented!!"
         tags: "restore"
     objects:
       - kind: Job
@@ -322,7 +328,7 @@ objects:
         metadata:
           name: ${JOB_NAME}
           annotations:
-            description: Backup project files for ALL PVCs
+            description: Restore project files for ALL PVCs
         spec:
           parallelism: 1
           completions: 1
@@ -353,149 +359,17 @@ objects:
                   - name: RESTIC_KEEP
                     value: ${RESTIC_KEEP}
                   - name: RESTIC_EXCLUDE
-                    value: ${RESTIC_EXCLUDE}                           
+                    value: ${RESTIC_EXCLUDE}
+                  - name: RESTIC_SNAPSHOT
+                    value: latest 
               restartPolicy: Never
-              serviceAccount: backup-sa
-              serviceAccountName: backup-sa
+              serviceAccount: restore-sa
+              serviceAccountName: restore-sa
     parameters:
       - name: JOB_NAME
         displayName: Name of the job
         description: Enter name of the job. It has to be unique in the project
-        value: project-all-files-backup
-        required: true
-      - name: RESTIC_PASSWORD 
-        displayName: Password for restic repository
-        description: Password for restic repository. If repository doesn't exist - script will create it. 
-        value: ${GLOBAL_RESTIC_PASSWORD}
-        required: true 
-      - name: RESTIC_DESTINATION
-        description: Destination to store backups. Set up 'aws' (AMAZON S3 storage) or 's3' (generic S3 server - like minio)
-        value: ${GLOBAL_RESTIC_DESTINATION}
-        required: true
-      - name: RESTIC_HOST
-        description: Server where you plan to store your backups
-        value: ${GLOBAL_RESTIC_HOST}
-        required: true
-      - name: RESTIC_S3_PORT
-        description: Port for s3 server
-        value: ${GLOBAL_RESTIC_S3_PORT}
-        required: true
-      - name: AWS_ACCESS_KEY_ID
-        description: Access key for your S3 server
-        value: ${GLOBAL_AWS_ACCESS_KEY}
-        required: true
-      - name: AWS_SECRET_ACCESS_KEY
-        description: Secret access key for your S3 server
-        value: ${GLOBAL_AWS_SECRET_ACCESS_KEY}
-        required: true
-      - name: RESTIC_KEEP
-        description: How many copies we should keep
-        value: '3'
-        required: true
-      - name: RESTIC_EXCLUDE
-        description: Which files we should exclude
-        value: '.zfs'
-        required: true          
-  - kind: Template
-    apiVersion: v1
-    metadata:
-      name: restore-whole-project
-      annotations:
-        description: "Template creates jobs to run restore of metadata and files for all PVCs in the project."
-        tags: "restore"
-    objects:
-      - kind: Job
-        apiVersion: batch/v1
-        metadata:
-          name: ${JOB_NAME_METADATA}
-          annotations:
-            description: Restore project metadata
-            template.alpha.openshift.io/wait-for-ready: "true"
-        spec:
-          parallelism: 1
-          completions: 1
-          template:
-            metadata:
-              name: project-metadata-restore
-            spec:
-              containers:
-              - name: project-metadata-restore
-                image: docker.io/vadimzharov/openshift-restore-image:latest
-                env:
-                  - name: BACKUP_TYPE
-                    value: metadata
-                  - name: RESTIC_PASSWORD
-                    value: ${RESTIC_PASSWORD}
-                  - name: PROJECT_NAME
-                    valueFrom:
-                      fieldRef:
-                        fieldPath: metadata.namespace  
-                  - name: RESTIC_TAG
-                    value: metadata
-                  - name: RESTIC_DESTINATION
-                    value: ${RESTIC_DESTINATION}
-                  - name: AWS_ACCESS_KEY_ID
-                    value: ${AWS_ACCESS_KEY_ID}
-                  - name: AWS_SECRET_ACCESS_KEY
-                    value: ${AWS_SECRET_ACCESS_KEY}
-                  - name: RESTIC_HOST
-                    value: ${RESTIC_HOST}
-                  - name: RESTIC_S3_PORT
-                    value: ${RESTIC_S3_PORT}
-              serviceAccount: backup-sa
-              serviceAccountName: backup-sa
-              restartPolicy: Never
-      - kind: Job
-        apiVersion: batch/v1
-        metadata:
-          name: ${JOB_NAME_FILES}
-          annotations:
-            description: Restore project files from ALL PVCs
-        spec:
-          parallelism: 1
-          completions: 1
-          template:
-            metadata:
-              name: project-all-files-restore
-            spec:
-              containers:
-              - name: project-all-files-restore
-                image: docker.io/vadimzharov/openshift-restore-all-files:latest
-                env:
-                  - name: RESTIC_PASSWORD
-                    value: ${RESTIC_PASSWORD}
-                  - name: PROJECT_NAME
-                    valueFrom:
-                      fieldRef:
-                        fieldPath: metadata.namespace  
-                  - name: RESTIC_DESTINATION
-                    value: ${RESTIC_DESTINATION}
-                  - name: AWS_ACCESS_KEY_ID
-                    value: ${AWS_ACCESS_KEY_ID}
-                  - name: AWS_SECRET_ACCESS_KEY
-                    value: ${AWS_SECRET_ACCESS_KEY}
-                  - name: RESTIC_HOST
-                    value: ${RESTIC_HOST}
-                  - name: RESTIC_S3_PORT
-                    value: ${RESTIC_S3_PORT}
-                  - name: RESTIC_KEEP
-                    value: ${RESTIC_KEEP}
-                  - name: RESTIC_EXCLUDE
-                    value: ${RESTIC_EXCLUDE}                                        
-              restartPolicy: Never
-              serviceAccount: backup-sa
-              serviceAccountName: backup-sa
-
-    parameters:
-      - name: JOB_NAME_FILES
-        displayName: Name of the job to backup all files
-        description: Enter name of the job. It has to be unique in the project
-        value: backup-whole-project-all-files
-        required: true        
-      - name: JOB_NAME_METADATA
-        displayName: Name of the job to backup project metadata
-        description: Enter name of the job. It has to be unique in the project
-        value: backup-whole-project-metadata
+        value: project-all-files-restore
         required: true
       - name: RESTIC_PASSWORD 
         displayName: Password for restic repository
