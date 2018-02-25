@@ -14,22 +14,24 @@ else
     exit
 fi
 
-echo "Restoring database for service ${DATABASE_SVC} using snapshot ${RESTIC_SNAPSHOT}"
+echo "Restoring database for service ${DATABASE_SVC} using snapshot ${RESTIC_SNAPSHOT}."
 
 echo "+================================+"
 echo "| Starting restore process....   |"
 echo "+================================+"
 
-restic -r $RESTIC_REPOSITORY restore $RESTIC_SNAPSHOT --target /tmp/ --include $DATABASE_SVC.creds --cache-dir /tmp/ 2>&1
+restic -r $RESTIC_REPOSITORY restore $RESTIC_SNAPSHOT --tag $DATABASE_SVC-creds --target /tmp/ --include $DATABASE_SVC.creds --cache-dir /tmp/ 2>&1
 
 DATABASE_USER=$(cat /tmp/$DATABASE_SVC.creds | awk '{print $2}')
 DATABASE_PASSWORD=$(cat /tmp/$DATABASE_SVC.creds | awk '{print $3}')
+
+echo "Your database user is $DATABASE_USER and password is $DATABASE_PASSWORD"
 
 case $DATABASE_TYPE in
     postgresql)
         echo "Will try to restore postgresql on service $DATABASE_SVC with user $DATABASE_USER and password $DATABASE_PASSWORD"
         export PGPASSWORD=$DATABASE_PASSWORD
-        restic -r $RESTIC_REPOSITORY dump $RESTIC_SNAPSHOT $DATABASE_SVC.sql | pg_restore -h $DATABASE_SVC -U $DATABASE_USER -C
+        restic -r $RESTIC_REPOSITORY dump --tag $DATABASE_SVC $RESTIC_SNAPSHOT $DATABASE_SVC.sql | pg_restore -h $DATABASE_SVC -U $DATABASE_USER -C
         ;;
     mysql)
         echo "Will try to restore mysql on service $DATABASE_SVC with user $DATABASE_USER and password $DATABASE_PASSWORD"

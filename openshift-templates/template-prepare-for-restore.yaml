@@ -78,8 +78,8 @@ objects:
       value: project-metadata-restore
       required: true
     - name: RESTIC_PASSWORD 
-      displayName: Password for restic repository.
-      description: Password for restic repository.
+      displayName: Password for your restic repository.
+      description: Password for your restic repository.
       value: ${GLOBAL_RESTIC_PASSWORD}
       required: true 
     - name: RESTIC_DESTINATION
@@ -93,17 +93,17 @@ objects:
       value: ${GLOBAL_RESTIC_HOST}
       required: true
     - name: RESTIC_S3_PORT
-      displayName: What is the port for your S3 server
-      description: Port for s3 server (ignore for aws)
+      displayName: What is the port for your S3 server?
+      description: Port for s3 server (ignore for aws).
       value: ${GLOBAL_RESTIC_S3_PORT}
     - name: AWS_ACCESS_KEY_ID
-      displayName: Access key for your S3 server
-      description: Access key for your S3 server
+      displayName: Access key for your S3 server or Amazon bucket.
+      description: Access key for your S3 server or Amazon bucket.
       value: ${GLOBAL_AWS_ACCESS_KEY}
       required: true
     - name: AWS_SECRET_ACCESS_KEY
-      displayName: Secret access key for your S3 server
-      description: Secret access key for your S3 server
+      displayName: Secret access key for your S3 server or Amazon bucket.
+      description: Secret access key for your S3 server or Amazon bucket.
       value: ${GLOBAL_AWS_SECRET_ACCESS_KEY}
       required: true
   - kind: Template
@@ -111,7 +111,7 @@ objects:
     metadata:
       name: restore-project-files
       annotations:
-        description: "Template creates job to restore all files for one PVC."
+        description: "Template creates job to restore all files for one PVC. You need to enter PVC name."
         tags: "restore"
     objects:
       - kind: Job
@@ -167,54 +167,57 @@ objects:
               serviceAccountName: restore-sa                    
     parameters:
       - name: JOB_NAME
+        displayName: Name of the job.
         description: Name of the job. It has to be unique in the project (just add a number in the name)
         value: project-files-restore
         required: true
-      - name: RESTIC_PASSWORD 
-        displayName: Password for restic repository
-        description: Password for restic repository. If repository doesn't exist - script will create it. 
-        value: ${GLOBAL_RESTIC_PASSWORD}
-        required: true 
       - name: CUSTOM_TAG
-        displayName: Enter name of PVC
-        description: Type persistent volume claim name (in your project)
+        displayName: Enter name of existing PVC
+        description: Type persistent volume claim name (in your project). It should be existing pvc.
         value: postgresql
         required: true 
+      - name: RESTIC_PASSWORD 
+        displayName: Password for your restic repository
+        description: Password for your restic repository.
+        value: ${GLOBAL_RESTIC_PASSWORD}
+        required: true 
       - name: RESTIC_SNAPSHOT
-        displayName: Snapshot id in restic.
-        description: Id of the snapshot. For latest use 'latest'.
+        displayName: Snapshot id in restic repository.
+        description: Id of the snapshot. For latest use default - 'latest'.
         value: latest
         required: true 
       - name: RESTIC_DESTINATION
-        description: Destination to store backups. Set up 'aws' (AMAZON S3 storage) or 's3' (generic S3 server - like minio)
+        displayName: What is the type of your server? (aws or s3)
+        description: Destination where to find your backups. Set up 'aws' (AMAZON S3 storage) or 's3' (generic S3 server - like minio)
         value: ${GLOBAL_RESTIC_DESTINATION}
         required: true
       - name: RESTIC_HOST
-        description: Server where you plan to store your backups
+        displayName: Where is your repository placed?
+        description: Server where you store your backups. For aws should be s3.amazonaws.com/my_bucket for s3 should be mys3server.com
         value: ${GLOBAL_RESTIC_HOST}
         required: true
       - name: RESTIC_S3_PORT
-        description: Port for s3 server
+        displayName: What is the port for your S3 server?
+        description: Port for s3 server (ignore for aws).
         value: ${GLOBAL_RESTIC_S3_PORT}
         required: true
       - name: AWS_ACCESS_KEY_ID
-        description: Access key for your S3 server
+        displayName: Access key for your S3 server or Amazon bucket.
+        description: Access key for your S3 server or Amazon bucket.
         value: ${GLOBAL_AWS_ACCESS_KEY}
         required: true
       - name: AWS_SECRET_ACCESS_KEY
-        description: Secret access key for your S3 server
+        displayName: Secret access key for your S3 server or Amazon bucket.
+        description: Secret access key for your S3 server or Amazon bucket.
         value: ${GLOBAL_AWS_SECRET_ACCESS_KEY}
         required: true
-      - name: RESTIC_EXCLUDE
-        description: Which files we should exclude
-        value: '.zfs'
-        required: true          
   - kind: Template
     apiVersion: v1
     metadata:
       name: restore-project-databases
       annotations:
-        description: "Template creates job to run database (MYSQL and PGSQL) restore."
+        description: "Template creates job to run database (MYSQL and PGSQL) restore. 
+        You need to know service name where is your database works."
         tags: "restore"
     objects:
       - kind: Job
@@ -262,6 +265,7 @@ objects:
     parameters:
       - name: JOB_NAME
         description: Name of the job. It has to be unique in the project (just add a number in the name)
+        displayName: Name of the job.
         value: project-database-restore
         required: true
       - name: DATABASE_TYPE
@@ -269,32 +273,38 @@ objects:
         value: postgresql
         required: true
       - name: DATABASE_SVC
+        displayName: Name of the service or IP address
         description: DNS name or IP address of exposed database service
         value: postgresql
         required: true
       - name: RESTIC_PASSWORD 
-        displayName: Password for restic repository
-        description: Password for restic repository. If repository doesn't exist - script will create it. 
+        displayName: Password for your restic repository
+        description: Password for your restic repository. If repository doesn't exist - script will create it. 
         value: ${GLOBAL_RESTIC_PASSWORD}
         required: true 
       - name: RESTIC_DESTINATION
-        description: Destination to store backups. Set up 'aws' (AMAZON S3 storage) or 's3' (generic S3 server - like minio)
+        displayName: What is the type of your server? (aws or s3)
+        description: Destination where to find your backups. Set up 'aws' (AMAZON S3 storage) or 's3' (generic S3 server - like minio)
         value: ${GLOBAL_RESTIC_DESTINATION}
         required: true
       - name: RESTIC_HOST
-        description: Server where you plan to store your backups
+        displayName: Where is your repository placed?
+        description: Server where you store your backups. For aws should be s3.amazonaws.com/my_bucket for s3 should be mys3server.com
         value: ${GLOBAL_RESTIC_HOST}
         required: true
       - name: RESTIC_S3_PORT
-        description: Port for s3 server
+        displayName: What is the port for your S3 server?
+        description: Port for s3 server (ignore for aws).
         value: ${GLOBAL_RESTIC_S3_PORT}
         required: true
       - name: AWS_ACCESS_KEY_ID
-        description: Access key for your S3 server
+        displayName: Access key for your S3 server or Amazon bucket.
+        description: Access key for your S3 server or Amazon bucket.
         value: ${GLOBAL_AWS_ACCESS_KEY}
         required: true
       - name: AWS_SECRET_ACCESS_KEY
-        description: Secret access key for your S3 server
+        displayName: Secret access key for your S3 server or Amazon bucket.
+        description: Secret access key for your S3 server or Amazon bucket.
         value: ${GLOBAL_AWS_SECRET_ACCESS_KEY}
         required: true
   - kind: Template
@@ -387,7 +397,7 @@ parameters:
     value: 123qweASD
     required: true
   - name: GLOBAL_RESTIC_DESTINATION
-    displayName: Which type of storage you use for backup (aws or s3)?
+    displayName: Which type of storage you use to store your backup (aws or s3)?
     description: Type of your backup store. Set up 'aws' (AMAZON S3 storage) or 's3' (generic S3 server - like minio)
     value: s3
     required: true
