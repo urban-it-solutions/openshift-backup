@@ -31,7 +31,7 @@ case $DATABASE_TYPE in
     postgresql)
         echo "Will try to restore postgresql on service $DATABASE_SVC with user $DATABASE_USER and password $DATABASE_PASSWORD"
         export PGPASSWORD=$DATABASE_PASSWORD
-        restic -r $RESTIC_REPOSITORY dump --tag $DATABASE_SVC $RESTIC_SNAPSHOT $DATABASE_SVC.sql | pg_restore -h $DATABASE_SVC -U $DATABASE_USER -C
+        restic -r $RESTIC_REPOSITORY dump --tag $DATABASE_SVC $RESTIC_SNAPSHOT $DATABASE_SVC.sql | psql -h $DATABASE_SVC -U $DATABASE_USER
         ;;
     mysql)
         echo "Will try to restore mysql on service $DATABASE_SVC with user $DATABASE_USER and password $DATABASE_PASSWORD"

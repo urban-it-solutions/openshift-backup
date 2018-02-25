@@ -414,12 +414,12 @@ parameters:
     description: TCP port for your S3 server (default is 9000)
     value: '9000'
   - name: GLOBAL_AWS_ACCESS_KEY
-    displayName: Access key for your S3 bucket.
-    description: Access key for your S3 server or Amazon bucket
+    displayName: Access key for your S3 server or Amazon bucket
+    description: Access key for your S3 server or Amazon bucket.
     value: 123qweASD
     required: true
   - name: GLOBAL_AWS_SECRET_ACCESS_KEY
-    displayName: Secret access key for your S3 bucket.
+    displayName: Secret access key for your S3 server or Amazon bucket
     description: Secret access key for your S3 server or Amazon bucket
     value: 123qweASD
     required: true
