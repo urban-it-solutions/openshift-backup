@@ -316,15 +316,18 @@ objects:
         value: ${GLOBAL_RESTIC_HOST}
         required: true
       - name: RESTIC_S3_PORT
+        displayName: What is the port for your S3 server?
         description: Port for s3 server
         value: ${GLOBAL_RESTIC_S3_PORT}
         required: true
       - name: AWS_ACCESS_KEY_ID
-        description: Access key for your S3 server
+        displayName: Access key for your S3 server or Amazon bucket.
+        description: Access key for your S3 server or Amazon bucket.
         value: ${GLOBAL_AWS_ACCESS_KEY}
         required: true
       - name: AWS_SECRET_ACCESS_KEY
-        description: Secret access key for your S3 server
+        displayName: Secret access key for your S3 server or Amazon bucket.
+        description: Secret access key for your S3 server or Amazon bucket.
         value: ${GLOBAL_AWS_SECRET_ACCESS_KEY}
         required: true
   - kind: Template
@@ -387,31 +390,38 @@ objects:
         value: ${GLOBAL_RESTIC_PASSWORD}
         required: true 
       - name: RESTIC_DESTINATION
+        displayName: What is the type of your server? (aws or s3)
         description: Destination to store backups. Set up 'aws' (AMAZON S3 storage) or 's3' (generic S3 server - like minio)
         value: ${GLOBAL_RESTIC_DESTINATION}
         required: true
       - name: RESTIC_HOST
+        displayName: Where is your repository placed?
         description: Server where you plan to store your backups
         value: ${GLOBAL_RESTIC_HOST}
         required: true
       - name: RESTIC_S3_PORT
-        description: Port for s3 server
+        displayName: What is the port for your S3 server?
+        description: Port for s3 server (ignore for aws).
         value: ${GLOBAL_RESTIC_S3_PORT}
         required: true
       - name: AWS_ACCESS_KEY_ID
+        displayName: Access key for your S3 server or Amazon bucket.
         description: Access key for your S3 server
         value: ${GLOBAL_AWS_ACCESS_KEY}
         required: true
       - name: AWS_SECRET_ACCESS_KEY
+        displayName: Secret access key for your S3 server or Amazon bucket.
         description: Secret access key for your S3 server
         value: ${GLOBAL_AWS_SECRET_ACCESS_KEY}
         required: true
       - name: RESTIC_KEEP
-        description: How many copies we should keep
+        displayName: How mane copies we should keep?
+        description: How many copies of files we should keep?
         value: '3'
         required: true
       - name: RESTIC_EXCLUDE
-        description: Which files we should exclude
+        displayName: Which files we should exclude?
+        description: Which files we should exclude? regexp is supported. See restic documentation for detals.
         value: '.zfs'
         required: true          
   - kind: Template
@@ -519,31 +529,38 @@ objects:
         value: ${GLOBAL_RESTIC_PASSWORD}
         required: true 
       - name: RESTIC_DESTINATION
+        displayName: What is the type of your server? (aws or s3)
         description: Destination to store backups. Set up 'aws' (AMAZON S3 storage) or 's3' (generic S3 server - like minio)
         value: ${GLOBAL_RESTIC_DESTINATION}
         required: true
       - name: RESTIC_HOST
+        displayName: Hostname of your S3 servier (or amazon)
         description: Server where you plan to store your backups
         value: ${GLOBAL_RESTIC_HOST}
         required: true
       - name: RESTIC_S3_PORT
+        displayName: What is the port for your S3 server?
         description: Port for s3 server
         value: ${GLOBAL_RESTIC_S3_PORT}
         required: true
       - name: AWS_ACCESS_KEY_ID
+        displayName: Access key for your S3 server or Amazon bucket.
         description: Access key for your S3 server
         value: ${GLOBAL_AWS_ACCESS_KEY}
         required: true
       - name: AWS_SECRET_ACCESS_KEY
+        displayName: Secret access key for your S3 server or Amazon bucket.
         description: Secret access key for your S3 server
         value: ${GLOBAL_AWS_SECRET_ACCESS_KEY}
         required: true
       - name: RESTIC_KEEP
-        description: How many copies we should keep
+        displayName: How mane copies we should keep?
+        description: How many copies of files we should keep?
         value: '3'
         required: true
       - name: RESTIC_EXCLUDE
-        description: Which files we should exclude
+        displayName: Which files we should exclude?
+        description: Which files we should exclude? regexp is supported. See restic documentation for detals.
         value: '.zfs'
         required: true          
 parameters:
@@ -553,10 +570,12 @@ parameters:
     value: 123qweASD
     required: true
   - name: GLOBAL_RESTIC_DESTINATION
+    displayName: Which type of storage you use to store your backup (aws or s3)?
     description: Destination to store backups. Set up 'aws' (AMAZON S3 storage) or 's3' (generic S3 server - like minio)
     value: s3
     required: true
   - name: GLOBAL_RESTIC_HOST
+    displayName: Hostname of the server with backups
     description: "Server (s3) where you plan to store your backups. For 'aws' should be like s3.amazonaws.com/my_bucket
     for 's3' should be like mys3.mydc.com
     Finally, restic repository for 'aws' will be s3:s3.amazonaws.com/my_bucket, 
@@ -564,13 +583,16 @@ parameters:
     value: jump02.home.msk
     required: true
   - name: GLOBAL_RESTIC_S3_PORT
+    displayName: TCP port of your S3 server (will be ignored for AWS)
     description: TCP port for your S3 server (default is 9000)
     value: '9000'
   - name: GLOBAL_AWS_ACCESS_KEY
+    displayName: Access key for your S3 server or Amazon bucket
     description: Access key for your S3 server or Amazon bucket
     value: 123qweASD
     required: true
   - name: GLOBAL_AWS_SECRET_ACCESS_KEY
+    displayName: Secret access key for your S3 server or Amazon bucket
     description: Secret access key for your S3 server or Amazon bucket
     value: 123qweASD
     required: true
