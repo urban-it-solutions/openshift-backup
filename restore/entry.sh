@@ -48,7 +48,7 @@ case $BACKUP_TYPE in
         ;;
     all-pvc)
         echo "Will try to restore files for all PVC's"
-        export RESTIC_REPOSITORY=$RESTIC_REPOSITORY/metadata/metadata
+        export RESTIC_REPOSITORY=$RESTIC_REPOSITORY"/metadata/metadata"
         ./restore-all-pvc.sh
         ;;
 esac
