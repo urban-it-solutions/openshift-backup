@@ -269,6 +269,7 @@ objects:
         value: project-database-restore
         required: true
       - name: DATABASE_TYPE
+        displayName: Type of restored database.
         description: Type of database to make restore. Values is postgresql and mysql.
         value: postgresql
         required: true
@@ -386,10 +387,6 @@ objects:
         description: Secret access key for your S3 server
         value: ${GLOBAL_AWS_SECRET_ACCESS_KEY}
         required: true
-      - name: RESTIC_EXCLUDE
-        description: Which files we should exclude
-        value: '.zfs'
-        required: true          
 parameters:
   - name: GLOBAL_RESTIC_PASSWORD
     displayName: Password for restic repository

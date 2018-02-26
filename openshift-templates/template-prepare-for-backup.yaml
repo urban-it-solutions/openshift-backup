@@ -4,7 +4,8 @@ metadata:
   name: prepare-for-backup
   annotations:
     description: "Template creates required OpenShift opbjects (templates and service accounts)
-      to perform all kind of backup (project metadata, files, databases)"
+      to perform all kind of backup (project metadata, files, databases)
+      The template will create service account backup-sa to make backup properly"
     tags: "backup"
 objects:
   - kind: ServiceAccount
@@ -72,6 +73,7 @@ objects:
             restartPolicy: Never
     parameters:
     - name: JOB_NAME
+      displayName: Name of the job.
       description: Name of the job. It has to be unique in the project (just add a number in the name)
       value: project-metadata-backup
       required: true
@@ -81,23 +83,28 @@ objects:
       value: ${GLOBAL_RESTIC_PASSWORD}
       required: true 
     - name: RESTIC_DESTINATION
+      displayName: What is the type of your server? (aws or s3)
       description: Destination to store backups. Set up 'aws' (AMAZON S3 storage) or 's3' (generic S3 server - like minio)
       value: ${GLOBAL_RESTIC_DESTINATION}
       required: true
     - name: RESTIC_HOST
+      displayName: What is the name of your server?
       description: Server where you plan to store your backups
       value: ${GLOBAL_RESTIC_HOST}
       required: true
     - name: RESTIC_S3_PORT
+      displayName: What is the port for your S3 server?
       description: Port for s3 server
       value: ${GLOBAL_RESTIC_S3_PORT}
       required: true
     - name: AWS_ACCESS_KEY_ID
-      description: Access key for your S3 server
+      displayName: Access key for your S3 server or Amazon bucket.
+      description: Access key for your S3 server or Amazon bucket.
       value: ${GLOBAL_AWS_ACCESS_KEY}
       required: true
     - name: AWS_SECRET_ACCESS_KEY
-      description: Secret access key for your S3 server
+      displayName: Secret access key for your S3 server or Amazon bucket.
+      description: Secret access key for your S3 server or Amazon bucket.
       value: ${GLOBAL_AWS_SECRET_ACCESS_KEY}
       required: true
   - kind: Template
@@ -164,44 +171,53 @@ objects:
                     claimName: ${CUSTOM_TAG}
     parameters:
       - name: JOB_NAME
+        displayName: Name of the job.
         description: Name of the job. It has to be unique in the project (just add a number in the name)
         value: project-files-backup
         required: true
+      - name: CUSTOM_TAG
+        displayName: Enter name of existing PVC
+        description: Persistent volume claim name
+        value: postgresql
+        required: true         
       - name: RESTIC_PASSWORD 
         displayName: Password for restic repository
         description: Password for restic repository. If repository doesn't exist - script will create it. 
         value: ${GLOBAL_RESTIC_PASSWORD}
         required: true 
-      - name: CUSTOM_TAG
-        description: Persistent volume claim name
-        value: postgresql
-        required: true 
       - name: RESTIC_DESTINATION
+        displayName: What is the type of your server? (aws or s3)
         description: Destination to store backups. Set up 'aws' (AMAZON S3 storage) or 's3' (generic S3 server - like minio)
         value: ${GLOBAL_RESTIC_DESTINATION}
         required: true
       - name: RESTIC_HOST
+        displayName: What is the hostname of your server?
         description: Server where you plan to store your backups
         value: ${GLOBAL_RESTIC_HOST}
         required: true
       - name: RESTIC_S3_PORT
-        description: Port for s3 server
+        displayName: What is the port for your S3 server?
+        description: Port for s3 server (ignore for aws).
         value: ${GLOBAL_RESTIC_S3_PORT}
         required: true
       - name: AWS_ACCESS_KEY_ID
-        description: Access key for your S3 server
+        displayName: Access key for your S3 server or Amazon bucket.
+        description: Access key for your S3 server or Amazon bucket.
         value: ${GLOBAL_AWS_ACCESS_KEY}
         required: true
       - name: AWS_SECRET_ACCESS_KEY
-        description: Secret access key for your S3 server
+        displayName: Secret access key for your S3 server or Amazon bucket.
+        description: Secret access key for your S3 server or Amazon bucket.
         value: ${GLOBAL_AWS_SECRET_ACCESS_KEY}
         required: true
       - name: RESTIC_KEEP
-        description: How many copies we should keep
+        displayName: How many copies we should keep?
+        description: How many copies of files we should keep?
         value: '3'
         required: true
       - name: RESTIC_EXCLUDE
-        description: Which files we should exclude
+        displayName: Which files we should exclude?
+        description: Which files we should exclude? regexp is supported. See restic documentation for detals.
         value: '.zfs'
         required: true          
   - kind: Template
@@ -260,23 +276,28 @@ objects:
               restartPolicy: Never
     parameters:
       - name: JOB_NAME
+        displayName: Name of the job.
         description: Name of the job. It has to be unique in the project (just add a number in the name)
         value: project-database-backup
         required: true
       - name: DATABASE_TYPE
+        displayName: Type of database to make backup.
         description: Type of database to make backup. Values is postgresql and mysql.
         value: postgresql
         required: true
       - name: DATABASE_SVC
+        displayName: Name of the service or IP address with DB listener.
         description: DNS name or IP address of exposed database service
         value: postgresql
         required: true
       - name: DATABASE_USER
-        description: Username to access database
+        displayName: Username to access database.
+        description: Username to access database.
         value: postgresql
         required: true
       - name: DATABASE_PASSWORD
-        description: Password to access database
+        displayName: Password to access database.
+        description: Password to access database.
         value: postgresql
         required: true
       - name: RESTIC_PASSWORD 
@@ -285,10 +306,12 @@ objects:
         value: ${GLOBAL_RESTIC_PASSWORD}
         required: true 
       - name: RESTIC_DESTINATION
+        displayName: What is the type of your server? (aws or s3)
         description: Destination to store backups. Set up 'aws' (AMAZON S3 storage) or 's3' (generic S3 server - like minio)
         value: ${GLOBAL_RESTIC_DESTINATION}
         required: true
       - name: RESTIC_HOST
+        displayName: What is the hostname of your server?
         description: Server where you plan to store your backups
         value: ${GLOBAL_RESTIC_HOST}
         required: true
