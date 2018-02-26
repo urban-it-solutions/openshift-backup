@@ -22,6 +22,15 @@ echo "+================================+"
 
 restic -r $RESTIC_REPOSITORY restore $RESTIC_SNAPSHOT --tag $DATABASE_SVC-creds --target /tmp/ --include $DATABASE_SVC.creds --cache-dir /tmp/ 2>&1
 
+rc=$?
+
+if [[ $rc == 0 ]]; then
+    echo "File with credentials restored" 
+else
+    echo "File with credentials not found. Status ${rc}"
+    exit
+fi
+
 DATABASE_USER=$(cat /tmp/$DATABASE_SVC.creds | awk '{print $2}')
 DATABASE_PASSWORD=$(cat /tmp/$DATABASE_SVC.creds | awk '{print $3}')
 
@@ -31,7 +40,7 @@ case $DATABASE_TYPE in
     postgresql)
         echo "Will try to restore postgresql on service $DATABASE_SVC with user $DATABASE_USER and password $DATABASE_PASSWORD"
         export PGPASSWORD=$DATABASE_PASSWORD
-        restic -r $RESTIC_REPOSITORY dump --tag $DATABASE_SVC $RESTIC_SNAPSHOT $DATABASE_SVC.sql | psql -h $DATABASE_SVC --username=$DATABASE_USER postgres
+        restic -r $RESTIC_REPOSITORY dump --tag $DATABASE_SVC $RESTIC_SNAPSHOT $DATABASE_SVC.sql --cache-dir /tmp/ | psql -h $DATABASE_SVC --username=$DATABASE_USER postgres
         ;;
     mysql)
         echo "Will try to restore mysql on service $DATABASE_SVC with user $DATABASE_USER and password $DATABASE_PASSWORD"

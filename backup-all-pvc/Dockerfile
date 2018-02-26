@@ -45,7 +45,7 @@ ENV RESTIC_SNAPSHOT="latest"
 
 
 # /data is the dir where you have to put the data to be backed up
-VOLUME /data
+# VOLUME /data
 
 COPY entry.sh /entry.sh
 

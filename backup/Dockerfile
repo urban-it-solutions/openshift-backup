@@ -44,9 +44,6 @@ ENV DATABASE_SVC="127.0.0.1"
 #DB password
 ENV DATABASE_PASSWORD=""
 
-# /data is the dir where you have to put the data to be backed up
-VOLUME /data
-
 COPY entry.sh /entry.sh
 COPY files-backup.sh /files-backup.sh
 COPY metadata-backup.sh /metadata-backup.sh

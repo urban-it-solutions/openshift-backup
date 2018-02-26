@@ -57,7 +57,7 @@ ENV RESTIC_SNAPSHOT="latest"
 
 
 # /data is the dir to restore data
-VOLUME /data
+# VOLUME /data
 
 COPY entry.sh /entry.sh
 COPY metadata-restore.sh /metadata-restore.sh
