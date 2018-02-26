@@ -10,10 +10,10 @@ echo " Repository password: $RESTIC_PASSWORD                                "
 echo " Backup tag: $RESTIC_TAG                                              "
 echo "======================================================================"
 
-if [[ $BACKUP_TYPE="all-pvc" ]]; then
-    $RESTORE_TYPE="files"
+if [[ $BACKUP_TYPE='all-pvc' ]]; then
+    export RESTORE_TYPE='files'
 else
-    $RESTORE_TYPE=$BACKUP_TYPE
+    export RESTORE_TYPE=$BACKUP_TYPE
 fi
 
 case $RESTIC_DESTINATION in
