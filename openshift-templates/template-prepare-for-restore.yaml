@@ -319,7 +319,8 @@ objects:
     metadata:
       name: restore-project-all-files
       annotations:
-        description: "Template creates job to run files restore for ALL PVC in the project (using latest snapshot). PVCs have to be presented!!"
+        description: "Template creates job to run files restore for ALL PVC in the project (using latest snapshot). 
+        It will create PVCs if needed from your project metadata backup."
         tags: "restore"
     objects:
       - kind: Job
@@ -337,7 +338,7 @@ objects:
             spec:
               containers:
               - name: project-all-files-restore
-                image: docker.io/vadimzharov/openshift-restore-all-files:latest
+                image: docker.io/vadimzharov/openshift-restore-image:latest
                 env:
                   - name: RESTIC_PASSWORD
                     value: ${RESTIC_PASSWORD}
@@ -358,7 +359,9 @@ objects:
                   - name: RESTIC_EXCLUDE
                     value: ${RESTIC_EXCLUDE}
                   - name: RESTIC_SNAPSHOT
-                    value: latest 
+                    value: latest
+                  - name: BACKUP_TYPE
+                    value: all-pvc
               restartPolicy: Never
               serviceAccount: restore-sa
               serviceAccountName: restore-sa
