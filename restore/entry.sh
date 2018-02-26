@@ -35,6 +35,10 @@ case $BACKUP_TYPE in
         echo "Will try to restore database with service $DATABASE_SVC"
         ./databases-restore.sh
         ;;
+    all-pvc)
+        echo "Will try to restore files for all PVC's"
+        ./restore-all-pvc.sh
+        ;;
 esac
 
 rc=$?

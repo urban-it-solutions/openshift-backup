@@ -20,7 +20,7 @@ RUN apk del git
 
 RUN mkdir /mnt/restic
 
-#backup type - metadata/files/databases
+#backup type - metadata/files/databases/all-pvc
 ENV BACKUP_TYPE="metadata"
 #destination for backup - full path (server address for s3, path for NFS (NFS was excluded))
 ENV RESTIC_REPOSITORY=""
@@ -54,7 +54,8 @@ ENV DATABASE_SVC="127.0.0.1"
 ENV DATABASE_PASSWORD=""
 #SNAPSHOT ID 
 ENV RESTIC_SNAPSHOT="latest"
-
+#API endpoints - to restore
+ENV API_TO_RESTORE=""
 
 # /data is the dir to restore data
 # VOLUME /data
@@ -63,6 +64,7 @@ COPY entry.sh /entry.sh
 COPY metadata-restore.sh /metadata-restore.sh
 COPY files-restore.sh /files-restore.sh
 COPY databases-restore.sh /databases-restore.sh
+COPY restore-all-pvc.sh /restore-all-pvc.sh
 COPY restic-openshift-api.cfg /restic-openshift-api.cfg
 COPY restic-openshift-oapi.cfg /restic-openshift-oapi.cfg
 
