@@ -57,7 +57,7 @@ echo "+================================+"
 echo "| Starting metadata restore...   |"
 echo "+================================+"
 
-if [[ -n $API_TO_RESTORE ]]; then
+if [[ "$API_TO_RESTORE" ]]; then
     echo "Will restore ONLY $API_TO_RESTORE in the project!"
     oc create -f $TMP_DIR/$PROJECT_NAME-$API_TO_RESTORE.yaml
     exit
