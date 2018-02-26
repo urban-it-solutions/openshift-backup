@@ -11,7 +11,8 @@ echo " Backup tag: $RESTIC_TAG                                              "
 echo "======================================================================"
 
 if [[ $BACKUP_TYPE='all-pvc' ]]; then
-    export RESTORE_TYPE='files'
+    export RESTORE_TYPE='metadata'
+    export RESTIC_TAG='metadata'
 else
     export RESTORE_TYPE=$BACKUP_TYPE
 fi
