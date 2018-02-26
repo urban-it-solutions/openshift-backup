@@ -68,6 +68,8 @@ objects:
                   value: ${RESTIC_HOST}
                 - name: RESTIC_S3_PORT
                   value: ${RESTIC_S3_PORT}
+                - name: API_TO_RESTORE
+                  value: ${API_TO_RESTORE}
             serviceAccount: restore-sa
             serviceAccountName: restore-sa
             restartPolicy: Never
@@ -77,6 +79,10 @@ objects:
       description: Name of the job. It has to be unique in the project (just add a number in the name)
       value: project-metadata-restore
       required: true
+    - name: API_TO_RESTORE 
+      displayName: Which metadata do you want to restore?
+      description: Enter (o)api endpoint which you want to restore. Keep empty to restore all metadata for all endpoints.
+      value: ""
     - name: RESTIC_PASSWORD 
       displayName: Password for your restic repository.
       description: Password for your restic repository.
