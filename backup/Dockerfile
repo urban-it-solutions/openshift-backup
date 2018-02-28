@@ -43,6 +43,8 @@ ENV DATABASE_USER="postgres"
 ENV DATABASE_SVC="127.0.0.1"
 #DB password
 ENV DATABASE_PASSWORD=""
+#DB name
+ENV DATABASE_NAME=""
 
 COPY entry.sh /entry.sh
 COPY files-backup.sh /files-backup.sh
