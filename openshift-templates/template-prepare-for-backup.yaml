@@ -273,6 +273,8 @@ objects:
                     value: ${DATABASE_USER}
                   - name: DATABASE_PASSWORD
                     value: ${DATABASE_PASSWORD}
+                  - name: DATABASE_NAME
+                    value: ${DATABASE_NAME}
               restartPolicy: Never
     parameters:
       - name: JOB_NAME
@@ -290,6 +292,9 @@ objects:
         description: DNS name or IP address of exposed database service
         value: postgresql
         required: true
+      - name: DATABASE_NAME
+        displayName: Name of your database.
+        description: Name of your database. If empty - will try to backup all databases using provided credentials.
       - name: DATABASE_USER
         displayName: Username to access database.
         description: Username to access database.
