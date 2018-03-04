@@ -7,9 +7,14 @@ echo "+====================================================+"
 
 case $DATABASE_TYPE in
     postgresql)
-        echo "Will try to backup postgresql on service $DATABASE_SVC with user $DATABASE_USER and password $DATABASE_PASSWORD"
         export PGPASSWORD=$DATABASE_PASSWORD
-        pg_dump -h $DATABASE_SVC -U $DATABASE_USER $DATABASE_NAME | restic backup -r $RESTIC_REPOSITORY --tag databases --tag $PROJECT_NAME --tag $DATABASE_SVC --hostname $PROJECT_NAME --stdin --stdin-filename $DATABASE_SVC-$DATABASE_NAME.sql --cache-dir /tmp/
+        if [[ "$DATABASE_NAME" ]]
+            echo "Will try to backup ONLY postgresql $DATABASE_NAME on service $DATABASE_SVC with user $DATABASE_USER and password $DATABASE_PASSWORD"
+            pg_dump -h $DATABASE_SVC -U $DATABASE_USER $DATABASE_NAME | restic backup -r $RESTIC_REPOSITORY --tag databases --tag $PROJECT_NAME --tag $DATABASE_SVC --hostname $PROJECT_NAME --stdin --stdin-filename $DATABASE_SVC-$DATABASE_NAME.sql --cache-dir /tmp/
+        else
+            echo "Will try to backup ALL postgresql databases on service $DATABASE_SVC with user $DATABASE_USER and password $DATABASE_PASSWORD"
+            pg_dumpall -h $DATABASE_SVC -U $DATABASE_USER | restic backup -r $RESTIC_REPOSITORY --tag databases --tag $PROJECT_NAME --tag $DATABASE_SVC --hostname $PROJECT_NAME --stdin --stdin-filename $DATABASE_SVC-$DATABASE_NAME.sql --cache-dir /tmp/
+        fi
         ;;
     mysql)
         echo "Will try to backup mysql on service $DATABASE_SVC with user $DATABASE_USER and password $DATABASE_PASSWORD"
