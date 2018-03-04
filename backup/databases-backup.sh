@@ -8,7 +8,7 @@ echo "+====================================================+"
 case $DATABASE_TYPE in
     postgresql)
         export PGPASSWORD=$DATABASE_PASSWORD
-        if [[ "$DATABASE_NAME" ]]
+        if [[ "$DATABASE_NAME" ]]; then
             echo "Will try to backup ONLY postgresql $DATABASE_NAME on service $DATABASE_SVC with user $DATABASE_USER and password $DATABASE_PASSWORD"
             pg_dump -h $DATABASE_SVC -U $DATABASE_USER $DATABASE_NAME | restic backup -r $RESTIC_REPOSITORY --tag databases --tag $PROJECT_NAME --tag $DATABASE_SVC --hostname $PROJECT_NAME --stdin --stdin-filename $DATABASE_SVC-$DATABASE_NAME.sql --cache-dir /tmp/
         else
