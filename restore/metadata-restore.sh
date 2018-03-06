@@ -31,11 +31,11 @@ fi
 if [[ $CHANGE_NAMESPACE="yes" ]]; then
     #OLD_PROJECT_NAME=$(grep -i ' name:' $TMP_DIR/$PROJECT_NAME-project.yaml | awk '{print $2}')
     #change namespace for all 
-    sed -i "s/namespace: $PROJECT_NAME/namespace: $NEW_PROJECT_NAME/g" *.yaml
+    sed -i "s/namespace: $PROJECT_NAME/namespace: $NEW_PROJECT_NAME/g" $TMP_DIR/*.yaml
     #change namespace in imagestream path
-    sed -i "s/5000\/$PROEJCT_NAME/5000\/$NEW_PROJECT_NAME/g" $PROJECT_NAME-imagestreams.yaml
+    sed -i "s/5000\/$PROEJCT_NAME/5000\/$NEW_PROJECT_NAME/g" $TMP_DIR/$PROJECT_NAME-imagestreams.yaml
     #remove IPs from services
-    sed -i "/clusterIP/d" finomancer-services.yaml
+    sed -i "/clusterIP/d" $TMP_DIR/$PROJECT_NAME-services.yaml
 fi
 
 
