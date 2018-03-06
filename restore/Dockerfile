@@ -56,6 +56,10 @@ ENV DATABASE_PASSWORD=""
 ENV RESTIC_SNAPSHOT="latest"
 #API endpoints - to restore
 ENV API_TO_RESTORE=""
+#Change namespace from original
+ENV CHANGE_NAMESPACE="yes"
+#New namespace name
+ENV NEW_PROJECT_NAME=""
 
 # /data is the dir to restore data
 # VOLUME /data

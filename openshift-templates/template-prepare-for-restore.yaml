@@ -52,7 +52,7 @@ objects:
                   value: metadata
                 - name: RESTIC_PASSWORD
                   value: ${RESTIC_PASSWORD}
-                - name: PROJECT_NAME
+                - name: NEW_PROJECT_NAME
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.namespace  
@@ -70,6 +70,10 @@ objects:
                   value: ${RESTIC_S3_PORT}
                 - name: API_TO_RESTORE
                   value: ${API_TO_RESTORE}
+                - name: CHANGE_NAMESPACE
+                  value: ${CHANGE_NAMESPACE}
+                - name: PROJECT_NAME
+                  value: ${PROJECT_NAME}
             serviceAccount: restore-sa
             serviceAccountName: restore-sa
             restartPolicy: Never
@@ -82,6 +86,14 @@ objects:
     - name: API_TO_RESTORE 
       displayName: Which metadata do you want to restore?
       description: Enter (o)api endpoint which you want to restore. Keep empty to restore all metadata for all endpoints.
+      value: ""
+    - name: CHANGE_NAMESPACE
+      displayName: Will you restore project to current project with different name?
+      description: Type yes if name of your currrent project is different from you stored project
+      value: "yes"
+    - name: PROJECT_NAME
+      displayName: What was the name of your old project
+      description: What was the name of your old project? I need it to determine repository name. Keep it empty if name of old project = name of new project
       value: ""
     - name: RESTIC_PASSWORD 
       displayName: Password for your restic repository.

@@ -3,12 +3,18 @@ set +e
 
 echo "======================================================================"
 echo " Parameters:                                                          "
-echo " Will restore: $BACKUP_TYPE for project $PROJECT_NAME                  "
+echo " Will restore: $BACKUP_TYPE for project $NEW_PROJECT_NAME                  "
 echo " Destination: $RESTIC_DESTINATION                                     "
 echo " Host $RESTIC_HOST:$RESTIC_S3_PORT                                 "
 echo " Repository password: $RESTIC_PASSWORD                                "
 echo " Backup tag: $RESTIC_TAG                                              "
 echo "======================================================================"
+
+if [[ "$PROJECT_NAME" ]]; then
+    echo "Will try to restore backup for old project $PROJECT_NAME to new project $NEW_PROJECT_NAME"
+else
+    export PROJECT_NAME=$NEW_PROJECT_NAME
+fi
 
 case $RESTIC_DESTINATION in
     s3)
