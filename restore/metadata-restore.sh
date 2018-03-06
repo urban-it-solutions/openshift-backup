@@ -29,12 +29,14 @@ else
 fi
 
 if [[ $CHANGE_NAMESPACE="yes" ]]; then
-    #OLD_PROJECT_NAME=$(grep -i ' name:' $TMP_DIR/$PROJECT_NAME-project.yaml | awk '{print $2}')
-    #change namespace for all 
+    echo "+===============================================+"
+    echo "| Changing namespace for your project.          |"
+    echo "+===============================================+"
+    echo "Changing namespace definition in all files..."
     sed -i "s/namespace: $PROJECT_NAME/namespace: $NEW_PROJECT_NAME/g" $TMP_DIR/*.yaml
-    #change namespace in imagestream path
+    echo "Changing namespace in imagestream definitions..."
     sed -i "s/5000\/$PROEJCT_NAME/5000\/$NEW_PROJECT_NAME/g" $TMP_DIR/$PROJECT_NAME-imagestreams.yaml
-    #remove IPs from services
+    echo "Removing ClusterIP from service definitions..."
     sed -i "/clusterIP/d" $TMP_DIR/$PROJECT_NAME-services.yaml
 fi
 
@@ -75,13 +77,13 @@ if [[ "$API_TO_RESTORE" ]]; then
 fi
 
 while read api; do
-    echo "Restoring $api for $PROJECT_NAME"
+    echo "Restoring $api for $NEW_PROJECT_NAME"
     oc create -f $TMP_DIR/$PROJECT_NAME-$api.yaml
     echo "=============================================================="
 done < /restic-openshift-oapi.cfg
 
 while read api; do
-    echo "Restoring $api for $PROJECT_NAME"
+    echo "Restoring $api for $NEW_PROJECT_NAME"
     oc create -f $TMP_DIR/$PROJECT_NAME-$api.yaml
     echo "=============================================================="
 done < /restic-openshift-api.cfg

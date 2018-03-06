@@ -354,7 +354,7 @@ objects:
                 env:
                   - name: RESTIC_PASSWORD
                     value: ${RESTIC_PASSWORD}
-                  - name: PROJECT_NAME
+                  - name: NEW_PROJECT_NAME
                     valueFrom:
                       fieldRef:
                         fieldPath: metadata.namespace  
@@ -374,6 +374,10 @@ objects:
                     value: latest
                   - name: BACKUP_TYPE
                     value: all-pvc
+                  - name: CHANGE_NAMESPACE
+                    value: ${CHANGE_NAMESPACE}
+                  - name: PROJECT_NAME
+                    value: ${PROJECT_NAME}
               restartPolicy: Never
               serviceAccount: restore-sa
               serviceAccountName: restore-sa
@@ -383,6 +387,14 @@ objects:
         description: Enter name of the job. It has to be unique in the project
         value: project-all-files-restore
         required: true
+      - name: CHANGE_NAMESPACE
+        displayName: Will you restore project to current project with different name?
+        description: Type yes if name of your currrent project is different from you stored project
+        value: "yes"
+      - name: PROJECT_NAME
+        displayName: What was the name of your old project
+        description: What was the name of your old project? I need it to determine repository name. Keep it empty if name of old project = name of new project
+        value: ""
       - name: RESTIC_PASSWORD 
         displayName: Password for restic repository
         description: Password for restic repository. If repository doesn't exist - script will create it. 
