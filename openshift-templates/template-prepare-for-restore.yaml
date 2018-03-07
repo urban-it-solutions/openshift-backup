@@ -46,7 +46,7 @@ objects:
           spec:
             containers:
             - name: project-metadata-restore
-              image: docker-registry.default.svc:5000/openshift/openshift-restore-image:latest
+              image: docker.io/vadimzharov/openshift-restore-image:latest
               env:
                 - name: BACKUP_TYPE
                   value: metadata
@@ -147,7 +147,7 @@ objects:
             spec:
               containers:
               - name: ${JOB_NAME}
-                image: docker-registry.default.svc:5000/openshift/openshift-restore-image:latest
+                image: docker.io/vadimzharov/openshift-restore-image:latest
                 env:
                   - name: BACKUP_TYPE
                     value: files
@@ -253,7 +253,7 @@ objects:
             spec:
               containers:
               - name: ${JOB_NAME}
-                image: docker-registry.default.svc:5000/openshift/openshift-restore-image:latest
+                image: docker.io/vadimzharov/openshift-restore-image:latest
                 env:
                   - name: BACKUP_TYPE
                     value: databases
@@ -350,7 +350,7 @@ objects:
             spec:
               containers:
               - name: project-all-files-restore
-                image: docker-registry.default.svc:5000/openshift/openshift-restore-image:latest
+                image: docker.io/vadimzharov/openshift-restore-image:latest
                 env:
                   - name: RESTIC_PASSWORD
                     value: ${RESTIC_PASSWORD}
