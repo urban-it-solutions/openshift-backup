@@ -90,7 +90,7 @@ objects:
     - name: CHANGE_NAMESPACE
       displayName: Will you restore project to current project with different name?
       description: Type yes if name of your currrent project is different from you stored project
-      value: "yes"
+      value: "no"
     - name: PROJECT_NAME
       displayName: What was the name of your old project
       description: What was the name of your old project? I need it to determine repository name. Keep it empty if name of old project = name of new project
@@ -153,7 +153,7 @@ objects:
                     value: files
                   - name: RESTIC_PASSWORD
                     value: ${RESTIC_PASSWORD}
-                  - name: PROJECT_NAME
+                  - name: NEW_PROJECT_NAME
                     valueFrom:
                       fieldRef:
                         fieldPath: metadata.namespace  
@@ -172,7 +172,9 @@ objects:
                   - name: RESTIC_SNAPSHOT
                     description: Restic snapshot id
                     value: ${RESTIC_SNAPSHOT}
-                    required: true                       
+                    required: true
+                  - name: PROJECT_NAME
+                    value: ${PROJECT_NAME}               
                 volumeMounts:
                   - mountPath: /data
                     name: backup-target
@@ -194,6 +196,14 @@ objects:
         description: Type persistent volume claim name (in your project). It should be existing pvc.
         value: postgresql
         required: true 
+      - name: CHANGE_NAMESPACE
+        displayName: Will you restore project to current project with different name?
+        description: Type yes if name of your currrent project is different from you stored project
+        value: "no"
+      - name: PROJECT_NAME
+        displayName: What was the name of your old project
+        description: What was the name of your old project? I need it to determine repository name. Keep it empty if name of old project = name of new project
+        value: ""
       - name: RESTIC_PASSWORD 
         displayName: Password for your restic repository
         description: Password for your restic repository.
@@ -390,7 +400,7 @@ objects:
       - name: CHANGE_NAMESPACE
         displayName: Will you restore project to current project with different name?
         description: Type yes if name of your currrent project is different from you stored project
-        value: "yes"
+        value: "no"
       - name: PROJECT_NAME
         displayName: What was the name of your old project
         description: What was the name of your old project? I need it to determine repository name. Keep it empty if name of old project = name of new project
