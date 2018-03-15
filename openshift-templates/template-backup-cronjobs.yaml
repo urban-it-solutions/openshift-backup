@@ -1,0 +1,428 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: cronjobs-for-backup
+  annotations:
+    description: "Template creates cronjob templates to backup metadata, files and databases.
+      It requires created service account (backup-sa) and secret (backup-credentials)"
+    tags: "backup"
+objects:
+  - kind: Template
+    apiVersion: v1
+    metadata:
+      name: backup-project-metadata-cronjob
+      annotations:
+        description: "Template creates cronjob to run all project metadata backup.
+          It requires service account (backup-sa) and secret (backup-credentials) to work correctly.
+          It will initiate restic repository if needed."
+        tags: "backup"
+    objects:
+    - apiVersion: batch/v2alpha1
+      kind: CronJob
+      metadata:
+        annotations:
+          description: Backup project metadata - CRONJOB
+        labels:
+          backup: project-metadata-cronjob
+        name: cronjob-backup-metadata
+      spec:
+        concurrencyPolicy: Allow
+        failedJobsHistoryLimit: 1
+        jobTemplate:
+          metadata:
+            creationTimestamp: null
+          spec:
+            template:
+              metadata:
+                creationTimestamp: null
+                labels:
+                  parent: cronjob-backup-metadata
+              spec:
+                containers:
+                - name: project-metadata-backup-cronjob
+                  image: docker.io/vadimzharov/openshift-backup-image:latest
+                  env:
+                    - name: BACKUP_TYPE
+                      value: metadata
+                    - name: RESTIC_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                          name: backup-credentials
+                          key: RESTIC_PASSWORD
+                    - name: PROJECT_NAME
+                      valueFrom:
+                        fieldRef:
+                          fieldPath: metadata.namespace  
+                    - name: RESTIC_TAG
+                      value: metadata
+                    - name: RESTIC_DESTINATION
+                      valueFrom:
+                        secretKeyRef:
+                          name: backup-credentials
+                          key: RESTIC_DESTINATION
+                    - name: AWS_ACCESS_KEY_ID
+                      valueFrom:
+                        secretKeyRef:
+                          name: backup-credentials
+                          key: AWS_ACCESS_KEY_ID
+                    - name: AWS_SECRET_ACCESS_KEY
+                      valueFrom:
+                        secretKeyRef:
+                          name: backup-credentials
+                          key: AWS_SECRET_ACCESS_KEY
+                    - name: RESTIC_HOST
+                      valueFrom:
+                        secretKeyRef:
+                          name: backup-credentials
+                          key: RESTIC_HOST
+                    - name: RESTIC_S3_PORT
+                      valueFrom:
+                        secretKeyRef:
+                          name: backup-credentials
+                          key: RESTIC_S3_PORT
+                    - name: RESTIC_KEEP
+                      valueFrom:
+                        secretKeyRef:
+                          name: backup-credentials
+                          key: RESTIC_KEEP
+                serviceAccount: backup-sa
+                serviceAccountName: backup-sa
+                restartPolicy: Never
+      schedule: ${CRONJOB_SCHEDULE}
+      successfulJobsHistoryLimit: 3
+      suspend: false
+    parameters:
+      - name: CRONJOB_SCHEDULE
+        displayName: Type schedule (in cronjob format) to run periodic backup jobs.
+        description: Type schedule (in cronjob format) to run periodic backup jobs.
+        value: ${GLOBAL_CRONJOB_SCHEDULE}
+        required: true         
+  - kind: Template
+    apiVersion: v1
+    metadata:
+      name: backup-project-files-cronjob
+      annotations:
+        description: "Template creates job to backup all files from one PVC.
+          It requires service account (backup-sa) and secret (backup-credentials) to work correctly.
+          It will initiate restic repository if needed."
+        tags: "backup"
+    objects:
+      - apiVersion: batch/v2alpha1
+        kind: CronJob
+        metadata:
+          annotations:
+            description: Backup project files - CRONJOB
+          labels:
+            backup: project-files-cronjob
+          name: cronjob-backup-project-files
+        spec:
+          concurrencyPolicy: Allow
+          failedJobsHistoryLimit: 1
+          jobTemplate:
+            metadata:
+              creationTimestamp: null
+            spec:
+              template:
+                metadata:
+                  creationTimestamp: null
+                  labels:
+                    parent: cronjob-backup-project-files
+                spec:
+                  containers:
+                  - name: project-files-backup-cronjob
+                    image: docker.io/vadimzharov/openshift-backup-image:latest
+                    env:
+                      - name: BACKUP_TYPE
+                        value: files
+                      - name: RESTIC_PASSWORD
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: RESTIC_PASSWORD
+                      - name: PROJECT_NAME
+                        valueFrom:
+                          fieldRef:
+                            fieldPath: metadata.namespace  
+                      - name: RESTIC_TAG
+                        value: ${CUSTOM_TAG}
+                      - name: RESTIC_DESTINATION
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: RESTIC_DESTINATION
+                      - name: AWS_ACCESS_KEY_ID
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: AWS_ACCESS_KEY_ID
+                      - name: AWS_SECRET_ACCESS_KEY
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: AWS_SECRET_ACCESS_KEY
+                      - name: RESTIC_HOST
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: RESTIC_HOST
+                      - name: RESTIC_S3_PORT
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: RESTIC_S3_PORT
+                      - name: RESTIC_KEEP
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: RESTIC_KEEP
+                        required: true
+                      - name: RESTIC_EXCLUDE
+                        description: Which files we should exclude
+                        value: ${RESTIC_EXCLUDE}
+                        required: true                       
+                    volumeMounts:
+                      - mountPath: /data
+                        name: backup-target
+                        readOnly: true
+                  restartPolicy: Never
+                  volumes:
+                    - name: backup-target
+                      persistentVolumeClaim:
+                        claimName: ${CUSTOM_TAG}
+        schedule: ${CRONJOB_SCHEDULE}
+        successfulJobsHistoryLimit: 3
+        suspend: false
+    parameters:
+      - name: CRONJOB_SCHEDULE
+        displayName: Type schedule (in cronjob format) to run periodic backup jobs.
+        description: Type schedule (in cronjob format) to run periodic backup jobs.
+        value: ${GLOBAL_CRONJOB_SCHEDULE}
+        required: true         
+      - name: CUSTOM_TAG
+        displayName: Enter name of existing PVC
+        description: Persistent volume claim name
+        value: postgresql
+        required: true         
+      - name: RESTIC_EXCLUDE
+        displayName: Which files we should exclude?
+        description: Which files we should exclude? regexp is supported. See restic documentation for detals.
+        value: '.zfs'
+        required: true
+  - kind: Template
+    apiVersion: v1
+    metadata:
+      name: backup-project-databases-cronjob
+      annotations:
+        description: "Template creates cronjob to run database (MYSQL and PGSQL) backup."
+        tags: "backup"
+    objects:
+      - apiVersion: batch/v2alpha1
+        kind: CronJob
+        metadata:
+          annotations:
+            description: Backup project databases - CRONJOB
+          labels:
+            backup: project-databases-cronjob
+          name: cronjob-backup-project-databases
+        spec:
+          concurrencyPolicy: Allow
+          failedJobsHistoryLimit: 1
+          jobTemplate:
+            metadata:
+              creationTimestamp: null
+            spec:
+              template:
+                metadata:
+                  creationTimestamp: null
+                  labels:
+                    parent: cronjob-backup-project-databases
+                spec:
+                  containers:
+                  - name: project-files-backup-cronjob
+                    image: docker.io/vadimzharov/openshift-backup-image:latest
+                    env:
+                      - name: BACKUP_TYPE
+                        value: databases
+                      - name: RESTIC_PASSWORD
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: RESTIC_PASSWORD
+                      - name: PROJECT_NAME
+                        valueFrom:
+                          fieldRef:
+                            fieldPath: metadata.namespace  
+                      - name: RESTIC_TAG
+                        value: ${DATABASE_SVC}
+                      - name: RESTIC_DESTINATION
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: RESTIC_DESTINATION
+                      - name: AWS_ACCESS_KEY_ID
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: AWS_ACCESS_KEY_ID
+                      - name: AWS_SECRET_ACCESS_KEY
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: AWS_SECRET_ACCESS_KEY
+                      - name: RESTIC_HOST
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: RESTIC_HOST
+                      - name: RESTIC_S3_PORT
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: RESTIC_S3_PORT
+                      - name: RESTIC_KEEP
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: RESTIC_KEEP
+                        required: true                
+                      - name: DATABASE_TYPE
+                        value: ${DATABASE_TYPE}
+                      - name: DATABASE_SVC
+                        value: ${DATABASE_SVC}
+                      - name: DATABASE_USER
+                        value: ${DATABASE_USER}
+                      - name: DATABASE_PASSWORD
+                        value: ${DATABASE_PASSWORD}
+                      - name: DATABASE_NAME
+                        value: ${DATABASE_NAME}
+                  restartPolicy: Never
+        schedule: ${CRONJOB_SCHEDULE}
+        successfulJobsHistoryLimit: 3
+        suspend: false                  
+    parameters:
+      - name: CRONJOB_SCHEDULE
+        displayName: Type schedule (in cronjob format) to run periodic backup jobs.
+        description: Type schedule (in cronjob format) to run periodic backup jobs.
+        value: ${GLOBAL_CRONJOB_SCHEDULE}
+        required: true
+      - name: DATABASE_TYPE
+        displayName: Type of database to make backup.
+        description: Type of database to make backup. Values is postgresql and mysql.
+        value: postgresql
+        required: true
+      - name: DATABASE_SVC
+        displayName: Name of the service or IP address with DB listener.
+        description: DNS name or IP address of exposed database service
+        value: postgresql
+        required: true
+      - name: DATABASE_NAME
+        displayName: Name of your database.
+        description: Name of your database. If empty - will try to backup all databases using provided credentials.
+      - name: DATABASE_USER
+        displayName: Username to access database.
+        description: Username to access database.
+        value: postgresql
+        required: true
+      - name: DATABASE_PASSWORD
+        displayName: Password to access database.
+        description: Password to access database.
+        value: postgresql
+        required: true
+  - kind: Template
+    apiVersion: v1
+    metadata:
+      name: backup-project-all-files-cronjob
+      annotations:
+        description: "Template creates cronjob to run files backup from ALL PVCs in the project"
+        tags: "backup"
+    objects:
+      - apiVersion: batch/v2alpha1
+        kind: CronJob
+        metadata:
+          annotations:
+            description: Backup all PVCs in project - CRONJOB
+          labels:
+            backup: project-all-files-cronjob
+          name: cronjob-backup-project-all-files
+        spec:
+          concurrencyPolicy: Allow
+          failedJobsHistoryLimit: 1
+          jobTemplate:
+            metadata:
+              creationTimestamp: null
+            spec:
+              template:
+                metadata:
+                  creationTimestamp: null
+                  labels:
+                    parent: cronjob-backup-project-all-files
+                spec:
+                  containers:
+                  - name: project-all-files-backup
+                    image: docker.io/vadimzharov/openshift-backup-all-files:latest
+                    env:
+                      - name: RESTIC_PASSWORD
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: RESTIC_PASSWORD
+                      - name: PROJECT_NAME
+                        valueFrom:
+                          fieldRef:
+                            fieldPath: metadata.namespace  
+                      - name: RESTIC_DESTINATION
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: RESTIC_DESTINATION
+                      - name: AWS_ACCESS_KEY_ID
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: AWS_ACCESS_KEY_ID
+                      - name: AWS_SECRET_ACCESS_KEY
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: AWS_SECRET_ACCESS_KEY
+                      - name: RESTIC_HOST
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: RESTIC_HOST
+                      - name: RESTIC_S3_PORT
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: RESTIC_S3_PORT
+                      - name: RESTIC_KEEP
+                        valueFrom:
+                          secretKeyRef:
+                            name: backup-credentials
+                            key: RESTIC_KEEP
+                      - name: RESTIC_EXCLUDE
+                        value: ${RESTIC_EXCLUDE}                         
+                  restartPolicy: Never
+                  serviceAccount: backup-sa
+                  serviceAccountName: backup-sa
+        schedule: ${CRONJOB_SCHEDULE}
+        successfulJobsHistoryLimit: 3
+        suspend: false                      
+    parameters:
+      - name: CRONJOB_SCHEDULE
+        displayName: Type schedule (in cronjob format) to run periodic backup jobs.
+        description: Type schedule (in cronjob format) to run periodic backup jobs.
+        value: ${GLOBAL_CRONJOB_SCHEDULE}
+        required: true
+      - name: RESTIC_EXCLUDE
+        displayName: Which files we should exclude?
+        description: Which files we should exclude? regexp is supported. See restic documentation for detals.
+        value: '.zfs'
+        required: true
+parameters:
+  - name: GLOBAL_CRONJOB_SCHEDULE
+    displayName: Type schedule (in cronjob format) to run periodic backup jobs.
+    description: Type schedule (in cronjob format) to run periodic backup jobs.
+    value: "35 22 * * *"
+    required: true
+
