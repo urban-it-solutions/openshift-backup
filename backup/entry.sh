@@ -41,6 +41,10 @@ case $BACKUP_TYPE in
         echo "Will try to backup database"
         ./databases-backup.sh
         ;;
+    all-pvcs)
+        echo "Will try to backup all pvcs in the project"
+        ./all-pvcs-backup.sh
+        ;;
 esac
 
 rc=$?
