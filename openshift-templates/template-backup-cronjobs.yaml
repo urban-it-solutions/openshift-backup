@@ -359,8 +359,10 @@ objects:
                 spec:
                   containers:
                   - name: project-all-files-backup
-                    image: docker.io/vadimzharov/openshift-backup-all-files:latest
+                    image: docker.io/vadimzharov/openshift-backup-image:latest
                     env:
+                      - name: BACKUP_TYPE
+                        value: all-pvcs
                       - name: RESTIC_PASSWORD
                         valueFrom:
                           secretKeyRef:
