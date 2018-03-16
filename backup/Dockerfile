@@ -1,8 +1,7 @@
-FROM golang:1.9.1-alpine3.6	
+FROM centos:latest
 MAINTAINER Vadim Zharov
 
-RUN echo http://nl.alpinelinux.org/alpine/v3.4/community >> /etc/apk/repositories
-RUN apk add --no-cache git nfs-utils openssh fuse curl wget postgresql mariadb-client
+RUN yum install git nfs-utils openssh fuse curl wget postgresql mariadb-client golang skopeo -y && yum clean all
 RUN git clone https://github.com/restic/restic \
   && cd restic \
   && go run build.go \
@@ -12,11 +11,11 @@ RUN wget https://github.com/openshift/origin/releases/download/v3.7.1/openshift-
 
 RUN tar -xvf openshift-origin-client-tools-v3.7.1-ab0f056-linux-64bit.tar.gz && mv openshift-origin-client-tools-v3.7.1-ab0f056-linux-64bit/oc /usr/local/bin/
 
-RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://raw.githubusercontent.com/sgerrand/alpine-pkg-glibc/master/sgerrand.rsa.pub
-RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.26-r0/glibc-2.26-r0.apk
-RUN apk add glibc-2.26-r0.apk
+#RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://raw.githubusercontent.com/sgerrand/alpine-pkg-glibc/master/sgerrand.rsa.pub
+#RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.26-r0/glibc-2.26-r0.apk
+#RUN apk add glibc-2.26-r0.apk
 
-RUN apk del git
+#RUN apk del git
 
 RUN mkdir /mnt/restic
 
