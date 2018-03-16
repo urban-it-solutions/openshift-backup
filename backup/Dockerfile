@@ -1,7 +1,7 @@
 FROM centos:latest
 MAINTAINER Vadim Zharov
 
-RUN yum install git nfs-utils openssh fuse curl wget postgresql mariadb-client golang skopeo -y && yum clean all
+RUN yum install git nfs-utils openssh fuse curl wget postgresql mariadb-client golang skopeo -y && yum clean all && rm -rf /var/cache/yum
 RUN git clone https://github.com/restic/restic \
   && cd restic \
   && go run build.go \
@@ -10,12 +10,6 @@ RUN git clone https://github.com/restic/restic \
 RUN wget https://github.com/openshift/origin/releases/download/v3.7.1/openshift-origin-client-tools-v3.7.1-ab0f056-linux-64bit.tar.gz
 
 RUN tar -xvf openshift-origin-client-tools-v3.7.1-ab0f056-linux-64bit.tar.gz && mv openshift-origin-client-tools-v3.7.1-ab0f056-linux-64bit/oc /usr/local/bin/
-
-#RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://raw.githubusercontent.com/sgerrand/alpine-pkg-glibc/master/sgerrand.rsa.pub
-#RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.26-r0/glibc-2.26-r0.apk
-#RUN apk add glibc-2.26-r0.apk
-
-#RUN apk del git
 
 RUN mkdir /mnt/restic
 
@@ -59,6 +53,7 @@ COPY files-backup.sh /files-backup.sh
 COPY metadata-backup.sh /metadata-backup.sh
 COPY databases-backup.sh /databases-backup.sh
 COPY all-pvcs-backup.sh /all-pvcs-backup.sh
+COPY images-backup.sh /images-backup.sh
 #file with API endpoints (kubernetes)
 COPY restic-openshift-api.cfg /restic-openshift-api.cfg
 #file with API endpoints (openshift)
