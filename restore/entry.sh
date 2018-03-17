@@ -48,6 +48,10 @@ case $BACKUP_TYPE in
         export RESTIC_REPOSITORY=$RESTIC_REPOSITORY"/metadata/metadata"
         ./restore-all-pvc.sh
         ;;
+    all-images)
+        echo "Will try to restore all image streams with images"
+        export RESTIC_REPOSITORY=$RESTIC_REPOSITORY"/all-images/images"
+        ./restore-all-images.sh
 esac
 
 rc=$?

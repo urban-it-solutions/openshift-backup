@@ -35,7 +35,7 @@ if [[ $CHANGE_NAMESPACE="yes" ]]; then
     echo "Changing namespace definition in all files..."
     sed -i "s/namespace: $PROJECT_NAME/namespace: $NEW_PROJECT_NAME/g" $TMP_DIR/*.yaml
     echo "Changing namespace in imagestream definitions..."
-    sed -i "s/5000\/$PROEJCT_NAME/5000\/$NEW_PROJECT_NAME/g" $TMP_DIR/$PROJECT_NAME-imagestreams.yaml
+    sed -i "s/5000\/$PROJECT_NAME/5000\/$NEW_PROJECT_NAME/g" $TMP_DIR/$PROJECT_NAME-imagestreams.yaml
     echo "Removing ClusterIP from service definitions..."
     sed -i "/clusterIP/d" $TMP_DIR/$PROJECT_NAME-services.yaml
 fi
