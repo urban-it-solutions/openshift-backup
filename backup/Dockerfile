@@ -53,7 +53,7 @@ COPY files-backup.sh /files-backup.sh
 COPY metadata-backup.sh /metadata-backup.sh
 COPY databases-backup.sh /databases-backup.sh
 COPY all-pvcs-backup.sh /all-pvcs-backup.sh
-COPY images-backup.sh /images-backup.sh
+COPY all-images-backup.sh /all-images-backup.sh
 #file with API endpoints (kubernetes)
 COPY restic-openshift-api.cfg /restic-openshift-api.cfg
 #file with API endpoints (openshift)
