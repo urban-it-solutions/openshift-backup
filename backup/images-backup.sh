@@ -6,7 +6,7 @@ echo "| Starting script to make images backup |"
 echo "+=================================================+"
 
 TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
-TMP_DIR=/var/tmp/$PROJECT_NAME
+TMP_DIR=/var/tmp/$PROJECT_NAME/images
 mkdir -p $TMP_DIR
 
 echo "Working using token $TOKEN"
@@ -19,10 +19,10 @@ oc get is -o custom-columns='NAME:.metadata.name' --no-headers=true | while read
     echo "Processing $is_name..."
     is_path=$(oc get is $is_name --no-headers | awk '{print $2}')
     is_tag=$(oc get is $is_name --no-headers | awk '{print $3}')
-    skopeo copy --src-tls-verify=false --src-creds backup-sa:$TOKEN docker://$is_path docker-archive:$TMP_DIR/$is_name:is_tag
+    skopeo copy --src-tls-verify=false --src-creds backup-sa:$TOKEN docker://$is_path docker-archive:$TMP_DIR/$is_name:$is_tag
 done
 
-restic -r $RESTIC_REPOSITORY backup $TMP_DIR/*.tar.gz --tag images --tag $PROJECT_NAME --tag $RESTIC_TAG --hostname $PROJECT_NAME --cache-dir /tmp/ 2>&1
+restic -r $RESTIC_REPOSITORY backup $TMP_DIR/* --tag images --tag $PROJECT_NAME --tag $RESTIC_TAG --hostname $PROJECT_NAME --cache-dir /tmp/ 2>&1
 
 rc=$?
 
