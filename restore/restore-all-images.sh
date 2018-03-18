@@ -1,7 +1,6 @@
 #!bin/sh
 set +e
 
-
 TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
 echo "Working using token $TOKEN"
 

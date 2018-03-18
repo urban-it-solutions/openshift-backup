@@ -46,10 +46,18 @@ case $BACKUP_TYPE in
     all-pvc)
         echo "Will try to restore files for all PVC's"
         export RESTIC_REPOSITORY=$RESTIC_REPOSITORY"/metadata/metadata"
+        echo "+=========================+"
+        echo "| Creating PVCs if needed |"
+        echo "+=========================+"
+        export API_TO_RESTORE="persistentvolumeclaims"
+        ./metadata-restore.sh
         ./restore-all-pvc.sh
         ;;
     all-images)
         echo "Will try to restore all image streams with images"
+        export API_TO_RESTORE="imagestreams"
+        export RESTIC_REPOSITORY=$RESTIC_REPOSITORY"/metadata/metadata"
+        ./metadata-restore.sh
         export RESTIC_REPOSITORY=$RESTIC_REPOSITORY"/all-images/images"
         ./restore-all-images.sh
 esac

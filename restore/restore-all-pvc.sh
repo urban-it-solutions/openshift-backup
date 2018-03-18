@@ -8,13 +8,6 @@ echo "+==============================================================+"
 echo "| Starting restore jobs to restore all PVCs in current project |"
 echo "+==============================================================+"
 
-echo "+=========================+"
-echo "| Creating PVCs if needed |"
-echo "+=========================+"
-
-export API_TO_RESTORE="persistentvolumeclaims"
-./metadata-restore.sh
-
 echo "Will try to restore these PVCs:"
 
 oc get pvc -o custom-columns='NAME:.metadata.name' --no-headers=true
