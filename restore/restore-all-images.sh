@@ -12,9 +12,6 @@ echo "+=================================+"
 echo "| Creating imagestreams if needed |"
 echo "+=================================+"
 
-export API_TO_RESTORE="imagestreams"
-./metadata-restore.sh
-
 TMP_DIR=/var/tmp/$PROJECT_NAME/images
 mkdir -p $TMP_DIR
 
