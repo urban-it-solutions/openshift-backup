@@ -11,6 +11,8 @@ echo "+================================================================+"
 TMP_DIR=/var/tmp/$PROJECT_NAME/images
 mkdir -p $TMP_DIR
 
+echo "Using repository $RESTIC_REPOSITORY"
+
 echo "+=================================+"
 echo "| Restoring images...             |"
 echo "+=================================+"
