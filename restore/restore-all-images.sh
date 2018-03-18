@@ -3,8 +3,6 @@ set +e
 
 
 TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
-TMP_DIR=/var/tmp/$PROJECT_NAME/images
-mkdir -p $TMP_DIR
 echo "Working using token $TOKEN"
 
 echo "+================================================================+"
@@ -17,6 +15,9 @@ echo "+=================================+"
 
 export API_TO_RESTORE="imagestreams"
 ./metadata-restore.sh
+
+TMP_DIR=/var/tmp/$PROJECT_NAME/images
+mkdir -p $TMP_DIR
 
 echo "+=================================+"
 echo "| Restoring images...             |"
