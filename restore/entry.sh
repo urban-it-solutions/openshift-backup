@@ -23,8 +23,6 @@ echo " Repository password: $RESTIC_PASSWORD                                "
 echo " Backup tag: $RESTIC_TAG                                              "
 echo "======================================================================"
 
-
-
 if [[ "$PROJECT_NAME" ]]; then
     echo "Will try to restore backup for old project $PROJECT_NAME to new project $NEW_PROJECT_NAME"
 else
@@ -77,7 +75,3 @@ else
     echo "Restore failed with status ${rc}"
     exit
 fi
-
-
-
-

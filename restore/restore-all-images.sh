@@ -11,13 +11,11 @@ echo "+================================================================+"
 TMP_DIR=/var/tmp/$PROJECT_NAME/images
 mkdir -p $TMP_DIR
 
-echo "Using repository $RESTIC_REPOSITORY"
-
 echo "+=================================+"
 echo "| Restoring images...             |"
 echo "+=================================+"
 
-restic -r $RESTIC_REPOSITORY restore $RESTIC_SNAPSHOT --target $TMP_DIR --cache-dir /tmp/ --include /data 2>&1
+restic -r $RESTIC_REPOSITORY restore $RESTIC_SNAPSHOT --target $TMP_DIR --cache-dir /tmp/ 2>&1
 
 echo "+=================================+"
 echo "| Pulling images into imagestreams|"
