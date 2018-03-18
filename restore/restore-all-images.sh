@@ -8,10 +8,6 @@ echo "+================================================================+"
 echo "| Starting restore jobs to restore all images in current project |"
 echo "+================================================================+"
 
-echo "+=================================+"
-echo "| Creating imagestreams if needed |"
-echo "+=================================+"
-
 TMP_DIR=/var/tmp/$PROJECT_NAME/images
 mkdir -p $TMP_DIR
 

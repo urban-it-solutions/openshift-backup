@@ -1,6 +1,19 @@
 #!bin/sh
 set +e
 
+function determine_repository {
+    case $RESTIC_DESTINATION in
+        s3)
+            echo "Will restore from S3 generic (like Minio) object store - $RESTIC_HOST:$RESTIC_S3_PORT"
+            export RESTIC_REPOSITORY=s3:http://$RESTIC_HOST:$RESTIC_S3_PORT/$PROJECT_NAME
+        ;;
+        aws)
+            echo "Will restore from AMAZON S3 storage - $RESTIC_HOST"
+            export RESTIC_REPOSITORY=s3:$RESTIC_HOST/$PROJECT_NAME
+        ;;
+    esac
+}
+
 echo "======================================================================"
 echo " Parameters:                                                          "
 echo " Will restore: $BACKUP_TYPE for project $NEW_PROJECT_NAME                  "
@@ -10,22 +23,15 @@ echo " Repository password: $RESTIC_PASSWORD                                "
 echo " Backup tag: $RESTIC_TAG                                              "
 echo "======================================================================"
 
+
+
 if [[ "$PROJECT_NAME" ]]; then
     echo "Will try to restore backup for old project $PROJECT_NAME to new project $NEW_PROJECT_NAME"
 else
     export PROJECT_NAME=$NEW_PROJECT_NAME
 fi
 
-case $RESTIC_DESTINATION in
-    s3)
-        echo "Will restore from S3 generic (like Minio) object store - $RESTIC_HOST:$RESTIC_S3_PORT"
-        export RESTIC_REPOSITORY=s3:http://$RESTIC_HOST:$RESTIC_S3_PORT/$PROJECT_NAME
-    ;;
-    aws)
-        echo "Will restore from AMAZON S3 storage - $RESTIC_HOST"
-        export RESTIC_REPOSITORY=s3:$RESTIC_HOST/$PROJECT_NAME
-    ;;
-esac
+determine_repository
 
 case $BACKUP_TYPE in
     metadata)
@@ -58,6 +64,7 @@ case $BACKUP_TYPE in
         export API_TO_RESTORE="imagestreams"
         export RESTIC_REPOSITORY=$RESTIC_REPOSITORY"/metadata/metadata"
         ./metadata-restore.sh
+        determine_repository
         export RESTIC_REPOSITORY=$RESTIC_REPOSITORY"/all-images/images"
         ./restore-all-images.sh
 esac
